@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zodiac Compatibility Checker - Daily Stars</title>
+<meta name="description" content="Free zodiac compatibility checker. Pick two signs and see their love and friendship match score.">
+<style>
+  body {
+    margin: 0; padding: 24px 16px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; line-height: 1.6;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .box { max-width: 460px; margin: 0 auto; text-align: center; }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; }
+  select {
+    width: 100%; padding: 12px; margin: 6px 0 14px; font-size: 1rem;
+    border-radius: 12px; border: 1px solid rgba(199,125,255,0.6);
+    background: rgba(255,255,255,0.1); color: #f3e8ff; font-family: Georgia, serif;
+  }
+  select option { color: #1a0033; }
+  label { display: block; text-align: left; font-size: 0.85rem; opacity: 0.8; }
+  button {
+    width: 100%; padding: 14px; font-size: 1.05rem; font-family: Georgia, serif;
+    border-radius: 14px; border: 1px solid rgba(199,125,255,0.8);
+    background: rgba(199,125,255,0.25); color: #f3e8ff; cursor: pointer;
+    box-shadow: 0 0 18px rgba(199,125,255,0.5);
+  }
+  button:active { background: rgba(199,125,255,0.5); }
+  #out {
+    display: none; margin-top: 24px; padding: 20px; text-align: left;
+    border-radius: 16px; background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.5);
+  }
+  #pair { text-align: center; font-size: 1.3rem; text-shadow: 0 0 14px #c77dff; }
+  #score { text-align: center; font-size: 2.4rem; margin: 4px 0; color: #e0aaff; text-shadow: 0 0 18px #c77dff; }
+  #label { text-align: center; opacity: 0.85; margin-bottom: 12px; }
+  .bar { height: 10px; border-radius: 6px; background: rgba(255,255,255,0.15); overflow: hidden; margin-bottom: 14px; }
+  .fill { height: 100%; width: 0; background: linear-gradient(90deg, #9d4edd, #e0aaff); transition: width 1s ease; }
+  a { color: #e0aaff; }
+  .note { font-size: 0.7rem; opacity: 0.5; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="box">
+  <h1>Zodiac Compatibility ✨</h1>
+  <p>Pick two signs to see how well they match.</p>
+
+  <label for="a">First sign</label>
+  <select id="a"></select>
+  <label for="b">Second sign</label>
+  <select id="b"></select>
+  <button onclick="check()">Check our match</button>
+
+  <div id="out">
+    <div id="pair"></div>
+    <div id="score"></div>
+    <div id="label"></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p id="text"></p>
+    <p id="tip"></p>
+  </div>
+
+  <p><a href="index.html">← Back to daily horoscopes</a></p>
+  <p class="note">For entertainment only.</p>
+</div>
+
+<script>
+  var signs = [
+    ["♈","Aries"],["♉","Taurus"],["♊","Gemini"],["♋","Cancer"],
+    ["♌","Leo"],["♍","Virgo"],["♎","Libra"],["♏","Scorpio"],
+    ["♐","Sagittarius"],["♑","Capricorn"],["♒","Aquarius"],["♓","Pisces"]
+  ];
+  var elementNames = ["Fire","Earth","Air","Water"];
+
+  var info = {
+    "0-0": [82, "Two fire signs make a bold, fast, high-energy pair. You push each other to try new things and rarely get bored. The risk is two strong wills clashing, so learn to take turns leading.", "Tip: Plan adventures together and agree on who decides what."],
+    "0-1": [62, "Fire moves quickly while earth prefers a steady pace. Fire brings excitement, earth brings stability, and each can teach the other something valuable. Friction appears when one feels rushed and the other feels held back.", "Tip: Meet in the middle: a firm plan with room for surprises."],
+    "0-2": [88, "Air feeds fire, so this is one of the liveliest matches in the zodiac. Conversation flows, ideas spark, and there is plenty of laughter. Keep a little depth in the mix so the fun lasts.", "Tip: Share goals as well as jokes."],
+    "0-3": [58, "Fire and water can create steam or put each other out. Fire is direct and water is sensitive, so careless words may hurt. With kindness and patience, they balance warmth with feeling.", "Tip: Say it gently and check how it landed."],
+    "1-1": [84, "Two earth signs build something solid. You value loyalty, comfort and a reliable routine, and you understand each other's need for security. Watch out for getting stuck in habits.", "Tip: Schedule something new every month."],
+    "1-2": [60, "Earth likes plans and air likes possibilities. Earth can feel air is scattered while air can feel earth is rigid. The match works when each respects the other's way of thinking.", "Tip: Let one person plan and the other add the spontaneity."],
+    "1-3": [90, "Earth gives water a safe place to land, and water gives earth warmth and depth. This is a nurturing, loyal pairing that feels like home. Take care that comfort does not turn into avoiding hard talks.", "Tip: Keep talking, even when things feel easy."],
+    "2-2": [80, "Two air signs share curiosity, humour and endless conversation. You give each other freedom and never run out of topics. Feelings sometimes stay in the head, so make room for emotion.", "Tip: Share how you feel, not just what you think."],
+    "2-3": [64, "Air thinks things through while water feels them first. Each may seem too light or too heavy to the other. With empathy, air learns to feel and water learns to step back and see the big picture.", "Tip: Listen first, then talk it through."],
+    "3-3": [86, "Two water signs understand each other without many words. The bond is deep, caring and intuitive. Mood swings can feed each other, so remember to ground yourselves.", "Tip: Take time outdoors together to reset."]
+  };
+
+  function labelFor(s) {
+    if (s >= 90) return "Cosmic match";
+    if (s >= 80) return "Great match";
+    if (s >= 70) return "Good match";
+    if (s >= 60) return "Needs effort, worth it";
+    return "Opposites attract";
+  }
+
+  var A = document.getElementById("a");
+  var B = document.getElementById("b");
+  signs.forEach(function (s, i) {
+    A.innerHTML += "<option value=\"" + i + "\">" + s[0] + " " + s[1] + "</option>";
+    B.innerHTML += "<option value=\"" + i + "\">" + s[0] + " " + s[1] + "</option>";
+  });
+  B.value = "1";
+
+  function check() {
+    var x = parseInt(A.value, 10);
+    var y = parseInt(B.value, 10);
+    var ex = x % 4, ey = y % 4;
+    var key = Math.min(ex, ey) + "-" + Math.max(ex, ey);
+    var data = info[key];
+    var score = Math.min(99, data[0] + ((x * y + x + y) % 11));
+
+    document.getElementById("pair").textContent =
+      signs[x][0] + " " + signs[x][1] + "  +  " + signs[y][0] + " " + signs[y][1];
+    document.getElementById("score").textContent = score + "%";
+    document.getElementById("label").textContent =
+      labelFor(score) + " · " + elementNames[ex] + " + " + elementNames[ey];
+    document.getElementById("text").textContent = data[1];
+    document.getElementById("tip").textContent = data[2];
+    document.getElementById("out").style.display = "block";
+    var fill = document.getElementById("fill");
+    fill.style.width = "0";
+    setTimeout(function () { fill.style.width = score + "%"; }, 50);
+  }
+</script>
+</body>
+</html>
