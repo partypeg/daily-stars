@@ -7,14 +7,51 @@
   body {
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d);
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
     color: #f3e8ff;
     font-family: Georgia, serif;
     text-align: center;
     padding: 24px 16px;
+    overflow-x: hidden;
   }
-  h1 { text-shadow: 0 0 20px #c77dff; font-size: 2rem; }
+  @keyframes drift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .star {
+    position: fixed;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 2px #c77dff;
+    pointer-events: none;
+    z-index: 0;
+    animation: float linear infinite, twinkle ease-in-out infinite;
+  }
+  @keyframes float {
+    from { transform: translateY(105vh); }
+    to   { transform: translateY(-10vh); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50%      { opacity: 0.9; }
+  }
+
+  h1, p, .grid, #result, .note { position: relative; z-index: 1; }
+  h1 {
+    text-shadow: 0 0 20px #c77dff;
+    font-size: 2rem;
+    animation: glow 5s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%, 100% { text-shadow: 0 0 12px #c77dff; }
+    50%      { text-shadow: 0 0 32px #e0aaff, 0 0 60px #9d4edd; }
+  }
   p { opacity: 0.8; }
+
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -30,9 +67,18 @@
     box-shadow: 0 0 14px rgba(199,125,255,0.35);
     font-size: 1.6rem;
     cursor: pointer;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .card:nth-child(even) { animation-delay: 3s; }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 10px rgba(199,125,255,0.25); }
+    50%      { box-shadow: 0 0 24px rgba(199,125,255,0.6); }
   }
   .card span { display: block; font-size: 0.8rem; margin-top: 6px; }
   .card:active { background: rgba(199,125,255,0.3); }
+
   #result {
     display: none;
     max-width: 420px;
@@ -42,10 +88,16 @@
     background: rgba(255,255,255,0.1);
     border: 1px solid rgba(199,125,255,0.7);
     box-shadow: 0 0 24px rgba(199,125,255,0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
   #result h2 { margin: 0 0 4px; text-shadow: 0 0 14px #c77dff; }
   #date { font-size: 0.8rem; opacity: 0.7; margin: 0 0 12px; }
   .note { font-size: 0.7rem; opacity: 0.5; margin-top: 24px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+  }
 </style>
 </head>
 <body>
@@ -81,8 +133,20 @@
     "Creativity is strong today. Make something just for the joy of it."
   ];
 
-  var grid = document.getElementById("grid");
+  // drifting stars
+  for (var n = 0; n < 28; n++) {
+    var s = document.createElement("div");
+    var size = 2 + Math.random() * 4;
+    s.className = "star";
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (18 + Math.random() * 30) + "s, " + (3 + Math.random() * 5) + "s";
+    s.style.animationDelay = (-Math.random() * 40) + "s, " + (-Math.random() * 6) + "s";
+    document.body.appendChild(s);
+  }
 
+  var grid = document.getElementById("grid");
   signs.forEach(function (s, i) {
     var div = document.createElement("div");
     div.className = "card";
