@@ -39,7 +39,7 @@
     0%, 100% { opacity: 0.2; }
     50%      { opacity: 0.9; }
   }
-  h1, p, .grid, #result, .note { position: relative; z-index: 1; }
+  h1, h2, p, .grid, #result, .note, .explore { position: relative; z-index: 1; }
   h1 {
     text-shadow: 0 0 20px #c77dff;
     font-size: 2rem;
@@ -95,6 +95,22 @@
   .sec { margin: 12px 0; line-height: 1.5; }
   .sec b { color: #e0aaff; display: block; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
   .lucky { margin-top: 16px; text-align: center; font-size: 0.9rem; opacity: 0.9; }
+  .explore { max-width: 420px; margin: 32px auto 0; }
+  .explore h2 { font-size: 1.1rem; color: #e0aaff; text-shadow: 0 0 12px #c77dff; margin-bottom: 12px; }
+  .explore a {
+    display: block;
+    margin: 10px 0;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(199,125,255,0.5);
+    box-shadow: 0 0 14px rgba(199,125,255,0.3);
+    color: #f3e8ff;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .explore a:active { background: rgba(199,125,255,0.3); }
   .note { font-size: 0.7rem; opacity: 0.5; margin-top: 24px; }
   .note a { color: #e0aaff; }
   @media (prefers-reduced-motion: reduce) {
@@ -117,6 +133,14 @@
   </div>
 
   <div class="grid" id="grid"></div>
+
+  <div class="explore">
+    <h2>Explore</h2>
+    <a href="compatibility.html">💞 Zodiac Compatibility Checker</a>
+    <a href="rising-sign.html">🌅 What Is a Rising Sign?</a>
+    <a href="elements.html">🔥 The 4 Zodiac Elements Explained</a>
+  </div>
+
   <p class="note">For entertainment only. Horoscopes are not professional advice.</p>
   <p class="note"><a href="about.html">About</a> · <a href="privacy.html">Privacy Policy</a></p>
 
