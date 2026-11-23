@@ -2,7 +2,8 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Daily Stars</title>
+<title>Daily Stars - Free Daily Horoscopes</title>
+<meta name="description" content="Free daily horoscopes for all 12 zodiac signs: love, work and mood readings that change every day.">
 <style>
   body {
     margin: 0;
@@ -21,7 +22,6 @@
     50%  { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
   }
-
   .star {
     position: fixed;
     border-radius: 50%;
@@ -39,7 +39,6 @@
     0%, 100% { opacity: 0.2; }
     50%      { opacity: 0.9; }
   }
-
   h1, p, .grid, #result, .note { position: relative; z-index: 1; }
   h1 {
     text-shadow: 0 0 20px #c77dff;
@@ -51,7 +50,6 @@
     50%      { text-shadow: 0 0 32px #e0aaff, 0 0 60px #9d4edd; }
   }
   p { opacity: 0.8; }
-
   .grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -78,7 +76,6 @@
   }
   .card span { display: block; font-size: 0.8rem; margin-top: 6px; }
   .card:active { background: rgba(199,125,255,0.3); }
-
   #result {
     display: none;
     max-width: 420px;
@@ -90,11 +87,15 @@
     box-shadow: 0 0 24px rgba(199,125,255,0.5);
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
+    text-align: left;
   }
-  #result h2 { margin: 0 0 4px; text-shadow: 0 0 14px #c77dff; }
-  #date { font-size: 0.8rem; opacity: 0.7; margin: 0 0 12px; }
+  #result h2 { margin: 0 0 2px; text-align: center; text-shadow: 0 0 14px #c77dff; }
+  .meta { text-align: center; font-size: 0.8rem; opacity: 0.7; margin: 0 0 14px; }
+  .about { font-style: italic; opacity: 0.9; margin: 0 0 16px; line-height: 1.5; }
+  .sec { margin: 12px 0; line-height: 1.5; }
+  .sec b { color: #e0aaff; display: block; font-size: 0.85rem; letter-spacing: 1px; text-transform: uppercase; }
+  .lucky { margin-top: 16px; text-align: center; font-size: 0.9rem; opacity: 0.9; }
   .note { font-size: 0.7rem; opacity: 0.5; margin-top: 24px; }
-
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; }
   }
@@ -106,32 +107,70 @@
 
   <div id="result">
     <h2 id="signName"></h2>
-    <p id="date"></p>
-    <div id="message"></div>
+    <p class="meta" id="meta"></p>
+    <p class="about" id="about"></p>
+    <div class="sec"><b>Love</b><span id="love"></span></div>
+    <div class="sec"><b>Work</b><span id="work"></span></div>
+    <div class="sec"><b>Mood</b><span id="mood"></span></div>
+    <p class="lucky" id="lucky"></p>
   </div>
 
   <div class="grid" id="grid"></div>
-  <p class="note">For entertainment only.</p>
+  <p class="note">For entertainment only. Horoscopes are not professional advice.</p>
 
 <script>
   var signs = [
-    ["♈","Aries"],["♉","Taurus"],["♊","Gemini"],["♋","Cancer"],
-    ["♌","Leo"],["♍","Virgo"],["♎","Libra"],["♏","Scorpio"],
-    ["♐","Sagittarius"],["♑","Capricorn"],["♒","Aquarius"],["♓","Pisces"]
+    ["♈","Aries","Mar 21 - Apr 19","Fire","Bold, quick and honest, Aries starts the things other people only talk about. Your gift is courage; your lesson is patience."],
+    ["♉","Taurus","Apr 20 - May 20","Earth","Steady and sensual, Taurus builds a life that feels good to live in. Your gift is loyalty; your lesson is flexibility."],
+    ["♊","Gemini","May 21 - Jun 20","Air","Curious and quick-witted, Gemini collects ideas and people. Your gift is communication; your lesson is staying with one thing."],
+    ["♋","Cancer","Jun 21 - Jul 22","Water","Protective and intuitive, Cancer feels the mood of a room before anyone speaks. Your gift is care; your lesson is letting others care for you."],
+    ["♌","Leo","Jul 23 - Aug 22","Fire","Warm and radiant, Leo lights up whatever space it enters. Your gift is generosity; your lesson is not needing applause."],
+    ["♍","Virgo","Aug 23 - Sep 22","Earth","Thoughtful and precise, Virgo notices the details that make things work. Your gift is service; your lesson is accepting good enough."],
+    ["♎","Libra","Sep 23 - Oct 22","Air","Graceful and fair-minded, Libra looks for balance in people and places. Your gift is harmony; your lesson is deciding without everyone's approval."],
+    ["♏","Scorpio","Oct 23 - Nov 21","Water","Intense and perceptive, Scorpio sees beneath the surface. Your gift is depth; your lesson is trusting without testing."],
+    ["♐","Sagittarius","Nov 22 - Dec 21","Fire","Adventurous and optimistic, Sagittarius is always looking toward the next horizon. Your gift is vision; your lesson is finishing the road you are on."],
+    ["♑","Capricorn","Dec 22 - Jan 19","Earth","Disciplined and ambitious, Capricorn climbs steadily toward long goals. Your gift is perseverance; your lesson is resting along the way."],
+    ["♒","Aquarius","Jan 20 - Feb 18","Air","Original and independent, Aquarius thinks years ahead of the crowd. Your gift is innovation; your lesson is staying close to people."],
+    ["♓","Pisces","Feb 19 - Mar 20","Water","Dreamy and compassionate, Pisces feels deeply and imagines freely. Your gift is empathy; your lesson is keeping healthy boundaries."]
   ];
 
-  var messages = [
-    "A calm moment today brings a clear idea. Trust the first thing that feels right.",
+  var love = [
+    "A warm word carries more weight than a grand gesture today. Say the kind thing out loud.",
     "Someone close is thinking of you. A small message could make their day.",
-    "Slow down today. The answer you want arrives when you stop chasing it.",
-    "A new door opens quietly. Say yes to something you would normally skip.",
-    "Your energy is glowing. Use it to finish one thing you have been putting off.",
-    "Listen more than you speak today. A useful secret is hiding in a conversation.",
-    "Treat yourself kindly. Rest is part of your progress, not a pause from it.",
-    "A small risk pays off today. Take the gentle step forward.",
-    "Old worries fade. Something you feared turns out lighter than it looked.",
-    "Creativity is strong today. Make something just for the joy of it."
+    "Old feelings may resurface. Notice them without acting on them right away.",
+    "Honest conversation clears the air. Speak gently and listen fully.",
+    "A new connection feels easy. Enjoy it without rushing it anywhere.",
+    "Give space where it is asked for. Closeness grows when nobody feels crowded.",
+    "Plan something simple together. Shared time matters more than a perfect plan.",
+    "An apology you have been holding back would lift a weight for both of you.",
+    "Romance shows up in small habits today: a shared meal, a text, a walk.",
+    "Be your own best company first. Everything else gets easier from there."
   ];
+  var work = [
+    "Focus on one task and finish it. A clean finish beats five half-starts.",
+    "A good idea needs a clear first step. Write it down before it fades.",
+    "Ask for help early. Someone around you knows a shortcut.",
+    "Tidy your plan for the week. A little order now saves effort later.",
+    "A small risk at work pays off. Take the gentle step forward.",
+    "Listen more than you speak in meetings. A useful detail is hiding in the conversation.",
+    "Money decisions go better after a pause. Sleep on anything big.",
+    "Your effort is being noticed, even if nobody says so yet.",
+    "Say no to one thing so you can say yes to something that matters.",
+    "Creative work flows today. Make something just for the joy of it."
+  ];
+  var mood = [
+    "Energy runs high in the morning and softens by evening. Plan around it.",
+    "Slow down today. The answer arrives when you stop chasing it.",
+    "A calm moment brings a clear idea. Trust the first thing that feels right.",
+    "Old worries fade. Something you feared turns out lighter than it looked.",
+    "Rest is part of your progress, not a pause from it. Treat yourself kindly.",
+    "Fresh air and a short walk will reset a heavy mood faster than you expect.",
+    "You may feel restless. Channel it into something physical or creative.",
+    "Gratitude is your anchor today. Name three small things that went right.",
+    "Quiet time recharges you. Protect an hour for yourself.",
+    "A sense of possibility is in the air. Let yourself be curious."
+  ];
+  var colors = ["Violet","Gold","Silver","Teal","Rose","Indigo","Emerald","Amber","Lavender","Crimson","Sky Blue","Pearl"];
 
   // drifting stars
   for (var n = 0; n < 28; n++) {
@@ -158,12 +197,18 @@
   function show(i) {
     var today = new Date();
     var start = new Date(today.getFullYear(), 0, 0);
-    var dayNumber = Math.floor((today - start) / 86400000);
-    var text = messages[(dayNumber + i * 3) % messages.length];
+    var d = Math.floor((today - start) / 86400000);
+    var sg = signs[i];
 
-    document.getElementById("signName").textContent = signs[i][0] + " " + signs[i][1];
-    document.getElementById("date").textContent = today.toDateString();
-    document.getElementById("message").textContent = text;
+    document.getElementById("signName").textContent = sg[0] + " " + sg[1];
+    document.getElementById("meta").textContent = sg[2] + " · " + sg[3] + " sign · " + today.toDateString();
+    document.getElementById("about").textContent = sg[4];
+    document.getElementById("love").textContent = love[(d + i * 5) % love.length];
+    document.getElementById("work").textContent = work[(d * 2 + i * 7) % work.length];
+    document.getElementById("mood").textContent = mood[(d * 3 + i * 3) % mood.length];
+    document.getElementById("lucky").textContent =
+      "Lucky color: " + colors[(d + i * 4) % colors.length] +
+      "  ·  Lucky number: " + (((d * 7 + i * 11) % 99) + 1);
     document.getElementById("result").style.display = "block";
     window.scrollTo(0, 0);
   }
