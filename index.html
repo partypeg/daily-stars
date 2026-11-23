@@ -29,26 +29,80 @@
     border: 1px solid rgba(199,125,255,0.5);
     box-shadow: 0 0 14px rgba(199,125,255,0.35);
     font-size: 1.6rem;
+    cursor: pointer;
   }
   .card span { display: block; font-size: 0.8rem; margin-top: 6px; }
+  .card:active { background: rgba(199,125,255,0.3); }
+  #result {
+    display: none;
+    max-width: 420px;
+    margin: 0 auto 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.5);
+  }
+  #result h2 { margin: 0 0 4px; text-shadow: 0 0 14px #c77dff; }
+  #date { font-size: 0.8rem; opacity: 0.7; margin: 0 0 12px; }
+  .note { font-size: 0.7rem; opacity: 0.5; margin-top: 24px; }
 </style>
 </head>
 <body>
   <h1>Daily Stars ✨</h1>
   <p>Choose your sign</p>
-  <div class="grid">
-    <div class="card">♈<span>Aries</span></div>
-    <div class="card">♉<span>Taurus</span></div>
-    <div class="card">♊<span>Gemini</span></div>
-    <div class="card">♋<span>Cancer</span></div>
-    <div class="card">♌<span>Leo</span></div>
-    <div class="card">♍<span>Virgo</span></div>
-    <div class="card">♎<span>Libra</span></div>
-    <div class="card">♏<span>Scorpio</span></div>
-    <div class="card">♐<span>Sagittarius</span></div>
-    <div class="card">♑<span>Capricorn</span></div>
-    <div class="card">♒<span>Aquarius</span></div>
-    <div class="card">♓<span>Pisces</span></div>
+
+  <div id="result">
+    <h2 id="signName"></h2>
+    <p id="date"></p>
+    <div id="message"></div>
   </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="note">For entertainment only.</p>
+
+<script>
+  var signs = [
+    ["♈","Aries"],["♉","Taurus"],["♊","Gemini"],["♋","Cancer"],
+    ["♌","Leo"],["♍","Virgo"],["♎","Libra"],["♏","Scorpio"],
+    ["♐","Sagittarius"],["♑","Capricorn"],["♒","Aquarius"],["♓","Pisces"]
+  ];
+
+  var messages = [
+    "A calm moment today brings a clear idea. Trust the first thing that feels right.",
+    "Someone close is thinking of you. A small message could make their day.",
+    "Slow down today. The answer you want arrives when you stop chasing it.",
+    "A new door opens quietly. Say yes to something you would normally skip.",
+    "Your energy is glowing. Use it to finish one thing you have been putting off.",
+    "Listen more than you speak today. A useful secret is hiding in a conversation.",
+    "Treat yourself kindly. Rest is part of your progress, not a pause from it.",
+    "A small risk pays off today. Take the gentle step forward.",
+    "Old worries fade. Something you feared turns out lighter than it looked.",
+    "Creativity is strong today. Make something just for the joy of it."
+  ];
+
+  var grid = document.getElementById("grid");
+
+  signs.forEach(function (s, i) {
+    var div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = s[0] + "<span>" + s[1] + "</span>";
+    div.onclick = function () { show(i); };
+    grid.appendChild(div);
+  });
+
+  function show(i) {
+    var today = new Date();
+    var start = new Date(today.getFullYear(), 0, 0);
+    var dayNumber = Math.floor((today - start) / 86400000);
+    var text = messages[(dayNumber + i * 3) % messages.length];
+
+    document.getElementById("signName").textContent = signs[i][0] + " " + signs[i][1];
+    document.getElementById("date").textContent = today.toDateString();
+    document.getElementById("message").textContent = text;
+    document.getElementById("result").style.display = "block";
+    window.scrollTo(0, 0);
+  }
+</script>
 </body>
 </html>
