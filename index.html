@@ -3,7 +3,7 @@
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daily Stars - Free Daily Horoscopes</title>
-<meta name="description" content="Free daily horoscopes for all 12 zodiac signs: love, work and mood readings that change every day. Ask the Oracle for a personal reading.">
+<meta name="description" content="Free daily horoscopes for all 12 zodiac signs: love, work and mood readings that change every day. Flip your daily card and ask the Oracle.">
 <style>
   body {
     margin: 0;
@@ -39,7 +39,7 @@
     0%, 100% { opacity: 0.2; }
     50%      { opacity: 0.9; }
   }
-  h1, h2, p, .grid, #result, .note, .explore, .oraclebtn { position: relative; z-index: 1; }
+  h1, h2, p, .grid, #result, .note, .explore, .actions { position: relative; z-index: 1; }
   h1 {
     text-shadow: 0 0 20px #c77dff;
     font-size: 2rem;
@@ -50,10 +50,15 @@
     50%      { text-shadow: 0 0 32px #e0aaff, 0 0 60px #9d4edd; }
   }
   p { opacity: 0.8; }
-  .oraclebtn {
-    display: inline-block;
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
     margin: 6px 0 14px;
-    padding: 14px 26px;
+  }
+  .actions a {
+    padding: 14px 20px;
     border-radius: 30px;
     color: #fff;
     text-decoration: none;
@@ -62,6 +67,7 @@
     box-shadow: 0 0 24px rgba(199,125,255,0.7);
     animation: pulse 3.5s ease-in-out infinite;
   }
+  .actions a:nth-child(2) { animation-delay: 1.7s; }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 16px rgba(199,125,255,0.5); }
     50%      { box-shadow: 0 0 36px rgba(224,170,255,0.95); }
@@ -136,7 +142,10 @@
 </head>
 <body>
   <h1>Daily Stars ✨</h1>
-  <a class="oraclebtn" href="oracle.html">🔮 Ask the Oracle</a>
+  <div class="actions">
+    <a href="oracle.html">🔮 Ask the Oracle</a>
+    <a href="card.html">🃏 Daily Card</a>
+  </div>
   <p>Or choose your sign</p>
 
   <div id="result">
@@ -153,12 +162,14 @@
 
   <div class="explore">
     <h2>Explore</h2>
+    <a href="card.html">🃏 Your Daily Star Card</a>
     <a href="oracle.html">🔮 The Oracle: Ask the Stars</a>
     <a href="compatibility.html">💞 Zodiac Compatibility Checker</a>
     <a href="big-three.html">☀️ Sun, Moon and Rising Explained</a>
     <a href="birth-chart.html">🗺️ What Is a Birth Chart?</a>
     <a href="rising-sign.html">🌅 What Is a Rising Sign?</a>
     <a href="elements.html">🔥 The 4 Zodiac Elements Explained</a>
+    <a href="modalities.html">🌀 Cardinal, Fixed and Mutable Signs</a>
     <a href="mercury-retrograde.html">☿ Mercury Retrograde Explained</a>
   </div>
 
