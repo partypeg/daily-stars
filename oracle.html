@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ask the Stars - The Oracle - Daily Stars</title>
+<meta name="description" content="Meet the Oracle of the Stars. Hear your daily horoscope, then answer a few yes or no questions for a personal reading about love, work or how you feel.">
+<style>
+  body {
+    margin: 0; padding: 20px 16px 40px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; overflow-x: hidden;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .star {
+    position: fixed; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 10px 2px #c77dff; pointer-events: none; z-index: 0;
+    animation: rise linear infinite, twinkle ease-in-out infinite;
+  }
+  @keyframes rise { from { transform: translateY(105vh); } to { transform: translateY(-10vh); } }
+  @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.9; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; text-align: center; }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; margin: 8px 0 0; }
+  .sub { opacity: 0.8; margin: 4px 0 0; font-style: italic; }
+
+  #orb {
+    width: 150px; height: 150px; margin: 36px auto 30px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #e0aaff 25%, #9d4edd 60%, #3d0a6b);
+    box-shadow: 0 0 40px #c77dff, 0 0 90px #9d4edd;
+    position: relative; cursor: pointer;
+    animation: bob 6s ease-in-out infinite;
+  }
+  #orb::before, #orb::after {
+    content: ""; position: absolute; inset: -10px; border-radius: 50%;
+    border: 1px solid rgba(224,170,255,0.7);
+    animation: ring 4s ease-out infinite;
+  }
+  #orb::after { animation-delay: 2s; }
+  @keyframes ring { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.7); opacity: 0; } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes talk { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
+  #orb.speaking { animation: bob 6s ease-in-out infinite, talk 0.9s ease-in-out infinite; }
+
+  #speech {
+    min-height: 90px; padding: 18px; border-radius: 18px; text-align: left;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.45);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    line-height: 1.6; white-space: pre-wrap;
+  }
+  #choices { margin-top: 18px; }
+  #choices.signs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  #choices.yn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn {
+    display: block; width: 100%; box-sizing: border-box; margin: 8px 0; padding: 14px 8px;
+    font-family: Georgia, serif; font-size: 1rem; color: #f3e8ff; cursor: pointer;
+    border-radius: 14px; border: 1px solid rgba(199,125,255,0.6);
+    background: rgba(255,255,255,0.08); box-shadow: 0 0 14px rgba(199,125,255,0.35);
+  }
+  #choices.signs .btn, #choices.yn .btn { margin: 0; }
+  .btn:active { background: rgba(199,125,255,0.35); }
+
+  .foot { font-size: 0.72rem; opacity: 0.6; margin-top: 28px; line-height: 1.5; }
+  a { color: #e0aaff; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>The Oracle ✨</h1>
+  <p class="sub">Ask the stars</p>
+
+  <div id="orb"></div>
+  <div id="speech"></div>
+  <div id="choices"></div>
+
+  <p class="foot">
+    For entertainment and reflection only. Answers are not advice, and nothing you choose is saved or sent anywhere.
+    If you are struggling, please reach out to someone you trust or a mental health professional.<br><br>
+    <a href="index.html">← Daily horoscopes</a>
+  </p>
+</div>
+
+<script>
+  var signs = [
+    ["♈","Aries","Fire"],["♉","Taurus","Earth"],["♊","Gemini","Air"],["♋","Cancer","Water"],
+    ["♌","Leo","Fire"],["♍","Virgo","Earth"],["♎","Libra","Air"],["♏","Scorpio","Water"],
+    ["♐","Sagittarius","Fire"],["♑","Capricorn","Earth"],["♒","Aquarius","Air"],["♓","Pisces","Water"]
+  ];
+
+  var love = [
+    "A warm word carries more weight than a grand gesture today.",
+    "Someone close is thinking of you. A small message could make their day.",
+    "Old feelings may resurface. Notice them without acting on them right away.",
+    "Honest conversation clears the air. Speak gently and listen fully.",
+    "A new connection feels easy. Enjoy it without rushing it anywhere.",
+    "Give space where it is asked for. Closeness grows when nobody feels crowded.",
+    "Plan something simple together. Shared time matters more than a perfect plan.",
+    "An apology you have been holding back would lift a weight for both of you.",
+    "Romance shows up in small habits today: a shared meal, a text, a walk.",
+    "Be your own best company first. Everything else gets easier from there."
+  ];
+  var work = [
+    "Focus on one task and finish it. A clean finish beats five half-starts.",
+    "A good idea needs a clear first step. Write it down before it fades.",
+    "Ask for help early. Someone around you knows a shortcut.",
+    "Tidy your plan for the week. A little order now saves effort later.",
+    "A small risk at work pays off. Take the gentle step forward.",
+    "Listen more than you speak. A useful detail is hiding in the conversation.",
+    "Money decisions go better after a pause. Sleep on anything big.",
+    "Your effort is being noticed, even if nobody says so yet.",
+    "Say no to one thing so you can say yes to something that matters.",
+    "Creative work flows today. Make something just for the joy of it."
+  ];
+  var mood = [
+    "Energy runs high in the morning and softens by evening. Plan around it.",
+    "Slow down today. The answer arrives when you stop chasing it.",
+    "A calm moment brings a clear idea. Trust the first thing that feels right.",
+    "Old worries fade. Something you feared turns out lighter than it looked.",
+    "Rest is part of your progress, not a pause from it. Treat yourself kindly.",
+    "Fresh air and a short walk will reset a heavy mood faster than you expect.",
+    "You may feel restless. Channel it into something physical or creative.",
+    "Gratitude is your anchor today. Name three small things that went right.",
+    "Quiet time recharges you. Protect an hour for yourself.",
+    "A sense of possibility is in the air. Let yourself be curious."
+  ];
+
+  var elementLine = {
+    "Fire": "Your fire nature acts fast, so pause once before you decide.",
+    "Earth": "Your earth nature wants solid ground, so choose the steady option.",
+    "Air": "Your air nature thinks things over, so let a conversation help you.",
+    "Water": "Your water nature feels first, so trust your instincts and be gentle with yourself."
+  };
+
+  var topics = {
+    love: {
+      label: "💞 Love and people",
+      closing: "Trust what feels kind, to them and to you.",
+      qs: [
+        ["Is this about someone you talk to almost every day?",
+          "Closeness is already there, so small honest words will matter more than big gestures.",
+          "Distance or silence is part of this, so patience will serve you better than chasing."],
+        ["Do you feel you give more than you receive?",
+          "Notice where your energy goes. Kindness is lovely, but it should flow both ways.",
+          "The balance feels fair, which is a strong foundation to build on."],
+        ["Is there something you have been wanting to say but have not?",
+          "Say it gently and soon. Unspoken words tend to grow heavier with time.",
+          "Your heart is clear for now, so enjoy the ease and keep listening."]
+      ]
+    },
+    work: {
+      label: "💼 Work and money",
+      closing: "Progress counts even when it is slow.",
+      qs: [
+        ["Are you thinking about making a change?",
+          "A change is calling, so take one small, practical step instead of a leap.",
+          "Staying the course is fine. Look for ways to make the present work better for you."],
+        ["Do you feel your effort goes unnoticed?",
+          "Make your results visible. Share one win with the right person this week.",
+          "Your work is landing well. Keep your quality steady."],
+        ["Is money or security on your mind?",
+          "Write your numbers down. Seeing them clearly calms worry and shows your next step.",
+          "Practical worries are quiet now, which is a good moment to plan something you want."]
+      ]
+    },
+    feelings: {
+      label: "🌙 How I am feeling",
+      closing: "You do not have to carry everything alone. If things feel too heavy, please talk to someone you trust or a professional.",
+      qs: [
+        ["Have you felt tired or stressed lately?",
+          "Your body and mind are asking for rest. Protect quiet time and sleep this week.",
+          "Your energy is steady. Use it for something that makes you feel alive."],
+        ["Is something you cannot control weighing on you?",
+          "Focus on the small part you can influence today, and let the rest wait.",
+          "Your mind has room right now, so let curiosity lead."],
+        ["Is there someone you trust that you could talk to?",
+          "Reach out to them today. Sharing a worry often makes it lighter.",
+          "Start small: write your thoughts down, and consider a counsellor or support line if things feel heavy."]
+      ]
+    }
+  };
+
+  var speech = document.getElementById("speech");
+  var choices = document.getElementById("choices");
+  var orb = document.getElementById("orb");
+  var timer = null, full = "", pos = 0, doneCb = null;
+  var state = { sign: 0, topic: "", qi: 0, ans: [] };
+
+  function say(text, cb) {
+    clearInterval(timer);
+    full = text; pos = 0; doneCb = cb || null;
+    choices.innerHTML = ""; choices.className = "";
+    orb.className = "speaking";
+    speech.textContent = "";
+    timer = setInterval(function () {
+      pos++;
+      speech.textContent = full.slice(0, pos);
+      if (pos >= full.length) finish();
+    }, 26);
+  }
+  function finish() {
+    clearInterval(timer);
+    pos = full.length;
+    speech.textContent = full;
+    orb.className = "";
+    if (doneCb) { var f = doneCb; doneCb = null; f(); }
+  }
+  function skip() { if (doneCb) finish(); }
+  orb.onclick = skip;
+  speech.onclick = skip;
+
+  function buttons(list, cls) {
+    choices.innerHTML = "";
+    choices.className = cls || "";
+    list.forEach(function (b) {
+      var el = document.createElement("button");
+      el.className = "btn";
+      el.textContent = b[0];
+      el.onclick = b[1];
+      choices.appendChild(el);
+    });
+  }
+
+  function start() {
+    say("Welcome, dreamer. I am the Oracle of the Stars. Tell me your sign and I will read your day.", function () {
+      buttons(signs.map(function (s, i) {
+        return [s[0] + " " + s[1], function () { pickSign(i); }];
+      }), "signs");
+    });
+  }
+
+  function pickSign(i) {
+    state.sign = i;
+    var today = new Date();
+    var begin = new Date(today.getFullYear(), 0, 0);
+    var d = Math.floor((today - begin) / 86400000);
+    var text = signs[i][1] + ", here is your day.\n\n" +
+      "Love: " + love[(d + i * 5) % love.length] + "\n\n" +
+      "Work: " + work[(d * 2 + i * 7) % work.length] + "\n\n" +
+      "Mood: " + mood[(d * 3 + i * 3) % mood.length];
+    say(text, function () {
+      buttons([
+        ["✨ Ask the stars about my situation", chooseTopic],
+        ["Choose a different sign", start]
+      ]);
+    });
+  }
+
+  function chooseTopic() {
+    say("What is on your mind? Answer a few questions with yes or no and I will tell you what I see.", function () {
+      var list = Object.keys(topics).map(function (k) {
+        return [topics[k].label, function () { askTopic(k); }];
+      });
+      list.push(["Back", function () { pickSign(state.sign); }]);
+      buttons(list);
+    });
+  }
+
+  function askTopic(key) {
+    state.topic = key; state.qi = 0; state.ans = [];
+    nextQ();
+  }
+
+  function nextQ() {
+    var t = topics[state.topic];
+    if (state.qi >= t.qs.length) { giveReading(); return; }
+    var q = t.qs[state.qi];
+    say(q[0], function () {
+      buttons([
+        ["Yes", function () { state.ans.push(q[1]); state.qi++; nextQ(); }],
+        ["No",  function () { state.ans.push(q[2]); state.qi++; nextQ(); }]
+      ], "yn");
+    });
+  }
+
+  function giveReading() {
+    var t = topics[state.topic];
+    var text = "The stars have listened.\n\n" +
+      state.ans.join(" ") + "\n\n" +
+      elementLine[signs[state.sign][2]] + "\n\n" +
+      t.closing;
+    say(text, function () {
+      buttons([
+        ["Ask about something else", chooseTopic],
+        ["Hear a new sign", start]
+      ]);
+    });
+  }
+
+  // drifting stars
+  for (var n = 0; n < 22; n++) {
+    var s = document.createElement("div");
+    var size = 2 + Math.random() * 4;
+    s.className = "star";
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (18 + Math.random() * 30) + "s, " + (3 + Math.random() * 5) + "s";
+    s.style.animationDelay = (-Math.random() * 40) + "s, " + (-Math.random() * 6) + "s";
+    document.body.appendChild(s);
+  }
+
+  start();
+</script>
+</body>
+</html>
