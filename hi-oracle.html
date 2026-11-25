@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ओरेकल - सितारों से पूछिए - डेली स्टार्स</title>
+<meta name="description" content="सितारों के ओरेकल से मिलिए। अपना दैनिक राशिफल सुनिए, फिर कुछ हाँ या नहीं सवालों के जवाब देकर प्रेम, काम या मन के बारे में निजी जवाब पाइए।">
+<style>
+  body {
+    margin: 0; padding: 20px 16px 40px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; line-height: 1.6; overflow-x: hidden;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .star {
+    position: fixed; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 10px 2px #c77dff; pointer-events: none; z-index: 0;
+    animation: rise linear infinite, twinkle ease-in-out infinite;
+  }
+  @keyframes rise { from { transform: translateY(105vh); } to { transform: translateY(-10vh); } }
+  @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.9; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; text-align: center; }
+  .langbar { text-align: right; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.85rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+  }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; margin: 8px 0 0; }
+  .sub { opacity: 0.85; margin: 4px 0 0; font-style: italic; }
+
+  #orb {
+    width: 150px; height: 150px; margin: 36px auto 30px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #ffffff, #e0aaff 25%, #9d4edd 60%, #3d0a6b);
+    box-shadow: 0 0 40px #c77dff, 0 0 90px #9d4edd;
+    position: relative; cursor: pointer;
+    animation: bob 6s ease-in-out infinite;
+  }
+  #orb::before, #orb::after {
+    content: ""; position: absolute; inset: -10px; border-radius: 50%;
+    border: 1px solid rgba(224,170,255,0.7);
+    animation: ring 4s ease-out infinite;
+  }
+  #orb::after { animation-delay: 2s; }
+  @keyframes ring { 0% { transform: scale(0.9); opacity: 0.8; } 100% { transform: scale(1.7); opacity: 0; } }
+  @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  @keyframes talk { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.4); } }
+  #orb.speaking { animation: bob 6s ease-in-out infinite, talk 0.9s ease-in-out infinite; }
+
+  #speech {
+    min-height: 90px; padding: 18px; border-radius: 18px; text-align: left;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.45);
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    line-height: 1.8; white-space: pre-wrap;
+  }
+  #choices { margin-top: 18px; }
+  #choices.signs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  #choices.yn { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .btn {
+    display: block; width: 100%; box-sizing: border-box; margin: 8px 0; padding: 14px 8px;
+    font-family: Georgia, serif; font-size: 1.05rem; color: #f3e8ff; cursor: pointer;
+    border-radius: 14px; border: 1px solid rgba(199,125,255,0.6);
+    background: rgba(255,255,255,0.08); box-shadow: 0 0 14px rgba(199,125,255,0.35);
+  }
+  #choices.signs .btn, #choices.yn .btn { margin: 0; }
+  .btn:active { background: rgba(199,125,255,0.35); }
+
+  .foot { font-size: 0.78rem; opacity: 0.65; margin-top: 28px; line-height: 1.7; }
+  a { color: #e0aaff; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar"><a href="oracle.html">English</a></div>
+  <h1>ओरेकल ✨</h1>
+  <p class="sub">सितारों से पूछिए</p>
+
+  <div id="orb"></div>
+  <div id="speech"></div>
+  <div id="choices"></div>
+
+  <p class="foot">
+    केवल मनोरंजन और आत्म-चिंतन के लिए। जवाब सलाह नहीं हैं, और आप जो भी चुनते हैं वह कहीं सेव या भेजा नहीं जाता।
+    अगर आप किसी परेशानी से जूझ रहे हैं, तो कृपया किसी भरोसेमंद व्यक्ति या मानसिक स्वास्थ्य विशेषज्ञ से बात करें।<br><br>
+    <a href="hi-index.html">← दैनिक राशिफल</a>
+  </p>
+</div>
+
+<script>
+  var signs = [
+    ["♈","मेष","अग्नि"],["♉","वृषभ","पृथ्वी"],["♊","मिथुन","वायु"],["♋","कर्क","जल"],
+    ["♌","सिंह","अग्नि"],["♍","कन्या","पृथ्वी"],["♎","तुला","वायु"],["♏","वृश्चिक","जल"],
+    ["♐","धनु","अग्नि"],["♑","मकर","पृथ्वी"],["♒","कुंभ","वायु"],["♓","मीन","जल"]
+  ];
+
+  var love = [
+    "आज बड़े इशारे से ज़्यादा एक मीठा शब्द मायने रखता है।",
+    "कोई अपना आपको याद कर रहा है। एक छोटा सा संदेश उनका दिन बना सकता है।",
+    "पुरानी भावनाएँ लौट सकती हैं। उन्हें महसूस कीजिए, पर तुरंत कोई कदम न उठाइए।",
+    "खुलकर बात करने से माहौल साफ़ होता है। नरमी से बोलिए और ध्यान से सुनिए।",
+    "एक नया रिश्ता सहज लगता है। उसका आनंद लीजिए, जल्दबाज़ी मत कीजिए।",
+    "जहाँ जगह माँगी जाए, वहाँ जगह दीजिए। रिश्ता तब बढ़ता है जब किसी को घुटन न हो।",
+    "साथ मिलकर कोई सरल योजना बनाइए। साथ बिताया समय परफ़ेक्ट योजना से ज़्यादा मायने रखता है।",
+    "जो माफ़ी आप रोके बैठे हैं, वह दोनों के मन का बोझ हल्का कर देगी।",
+    "आज प्यार छोटी आदतों में दिखता है: साथ खाना, एक मैसेज, एक सैर।",
+    "पहले ख़ुद के सबसे अच्छे साथी बनिए। बाक़ी सब उसके बाद आसान हो जाता है।"
+  ];
+  var work = [
+    "एक काम पर ध्यान दीजिए और उसे पूरा कीजिए। पाँच अधूरे कामों से एक पूरा काम बेहतर है।",
+    "अच्छे विचार को पहला साफ़ कदम चाहिए। भूलने से पहले उसे लिख लीजिए।",
+    "मदद जल्दी माँगिए। आपके आसपास कोई न कोई आसान रास्ता जानता है।",
+    "इस हफ़्ते की योजना व्यवस्थित कीजिए। अभी की थोड़ी तरतीब बाद में बहुत मेहनत बचाती है।",
+    "काम में छोटा सा जोखिम फ़ायदा देगा। आगे की ओर एक कोमल कदम बढ़ाइए।",
+    "बोलने से ज़्यादा सुनिए। एक काम की बात बातचीत में छिपी है।",
+    "पैसों के फ़ैसले थोड़ा रुककर लीजिए। किसी बड़े फ़ैसले पर एक रात सोच लीजिए।",
+    "आपकी मेहनत देखी जा रही है, भले अभी कोई कह न रहा हो।",
+    "किसी एक चीज़ को ना कहिए ताकि जो ज़रूरी है उसे हाँ कह सकें।",
+    "आज रचनात्मक काम अच्छा चलेगा। बस आनंद के लिए कुछ बनाइए।"
+  ];
+  var mood = [
+    "सुबह ऊर्जा ज़्यादा रहेगी और शाम तक धीमी पड़ेगी। उसी के हिसाब से योजना बनाइए।",
+    "आज धीमे चलिए। जवाब तब आता है जब आप उसके पीछे भागना छोड़ देते हैं।",
+    "एक शांत पल साफ़ विचार लाता है। जो पहली बात सही लगे, उस पर भरोसा कीजिए।",
+    "पुरानी चिंताएँ हल्की पड़ रही हैं। जिससे आप डर रहे थे, वह उतना भारी नहीं निकलता।",
+    "आराम भी तरक़्क़ी का हिस्सा है, रुकना नहीं। ख़ुद के साथ नरमी से पेश आइए।",
+    "खुली हवा और थोड़ी सैर भारी मन को उम्मीद से जल्दी हल्का कर देती है।",
+    "बेचैनी महसूस हो सकती है। उसे किसी शारीरिक या रचनात्मक काम में लगा दीजिए।",
+    "आज कृतज्ञता आपका सहारा है। तीन छोटी अच्छी बातें याद कीजिए जो आज हुईं।",
+    "शांत समय आपको ऊर्जा देता है। अपने लिए एक घंटा बचाकर रखिए।",
+    "हवा में नई संभावना है। ख़ुद को जिज्ञासु रहने दीजिए।"
+  ];
+
+  var elementLine = {
+    "अग्नि": "आपका अग्नि स्वभाव जल्दी कदम उठाता है, इसलिए फ़ैसला लेने से पहले एक बार रुकिए।",
+    "पृथ्वी": "आपका पृथ्वी स्वभाव ठोस ज़मीन चाहता है, इसलिए स्थिर विकल्प चुनिए।",
+    "वायु": "आपका वायु स्वभाव सोच-विचार करता है, इसलिए किसी से बात करके मदद लीजिए।",
+    "जल": "आपका जल स्वभाव पहले महसूस करता है, इसलिए अपनी सहज समझ पर भरोसा कीजिए और ख़ुद के साथ नरमी बरतिए।"
+  };
+
+  var topics = {
+    love: {
+      label: "💞 प्रेम और रिश्ते",
+      closing: "जो बात दोनों के लिए दयालु लगे, उस पर भरोसा कीजिए।",
+      qs: [
+        ["क्या यह किसी ऐसे व्यक्ति के बारे में है जिससे आप लगभग रोज़ बात करते हैं?",
+          "नज़दीकी पहले से है, इसलिए बड़े इशारों से ज़्यादा छोटे, सच्चे शब्द मायने रखेंगे।",
+          "दूरी या ख़ामोशी इस बात का हिस्सा है, इसलिए पीछा करने से ज़्यादा धैर्य काम आएगा।"],
+        ["क्या आपको लगता है कि आप जितना देते हैं, उससे कम पाते हैं?",
+          "देखिए आपकी ऊर्जा कहाँ जा रही है। दया अच्छी बात है, पर वह दोनों तरफ़ से बहनी चाहिए।",
+          "संतुलन ठीक लगता है, जो आगे बढ़ने के लिए मज़बूत नींव है।"],
+        ["क्या कोई बात है जो आप कहना चाहते थे पर कह नहीं पाए?",
+          "उसे नरमी से और जल्दी कह दीजिए। अनकही बातें वक़्त के साथ भारी होती जाती हैं।",
+          "आपका मन अभी साफ़ है, तो इस सहजता का आनंद लीजिए और सुनते रहिए।"]
+      ]
+    },
+    work: {
+      label: "💼 काम और पैसा",
+      closing: "तरक़्क़ी धीमी हो तब भी गिनी जाती है।",
+      qs: [
+        ["क्या आप कोई बदलाव करने के बारे में सोच रहे हैं?",
+          "बदलाव आपको बुला रहा है, इसलिए छलांग लगाने के बजाय एक छोटा, व्यावहारिक कदम उठाइए।",
+          "जहाँ हैं वहीं टिके रहना ठीक है। देखिए कि मौजूदा काम को अपने लिए बेहतर कैसे बनाया जाए।"],
+        ["क्या आपको लगता है कि आपकी मेहनत पर किसी का ध्यान नहीं जाता?",
+          "अपने नतीजे दिखाइए। इस हफ़्ते सही व्यक्ति को अपनी एक जीत बताइए।",
+          "आपका काम सही जगह पहुँच रहा है। अपनी गुणवत्ता बनाए रखिए।"],
+        ["क्या पैसे या सुरक्षा की चिंता आपके मन में है?",
+          "अपने आँकड़े लिख लीजिए। उन्हें साफ़ देखने से चिंता कम होती है और अगला कदम दिखता है।",
+          "व्यावहारिक चिंताएँ अभी शांत हैं, जो अपनी पसंद की कोई चीज़ योजना बनाने का अच्छा समय है।"]
+      ]
+    },
+    feelings: {
+      label: "🌙 मेरा मन कैसा है",
+      closing: "आपको सब कुछ अकेले नहीं उठाना है। अगर मन बहुत भारी लगे, तो कृपया किसी भरोसेमंद व्यक्ति या विशेषज्ञ से बात कीजिए।",
+      qs: [
+        ["क्या आप हाल में थके हुए या तनाव में रहे हैं?",
+          "आपका शरीर और मन आराम माँग रहे हैं। इस हफ़्ते शांत समय और नींद को प्राथमिकता दीजिए।",
+          "आपकी ऊर्जा स्थिर है। उसे किसी ऐसी चीज़ में लगाइए जो आपको जीवंत महसूस कराए।"],
+        ["क्या कोई ऐसी बात आपको दबा रही है जो आपके बस में नहीं है?",
+          "उस छोटे हिस्से पर ध्यान दीजिए जिसे आज आप बदल सकते हैं, बाक़ी को इंतज़ार करने दीजिए।",
+          "अभी आपके मन में जगह है, तो जिज्ञासा को आगे चलने दीजिए।"],
+        ["क्या कोई भरोसेमंद व्यक्ति है जिससे आप बात कर सकते हैं?",
+          "आज ही उनसे संपर्क कीजिए। चिंता बाँटने से अक्सर वह हल्की हो जाती है।",
+          "छोटी शुरुआत कीजिए: अपने विचार लिख लीजिए, और अगर मन बहुत भारी लगे तो किसी काउंसलर या सहायता हेल्पलाइन के बारे में सोचिए।"]
+      ]
+    }
+  };
+
+  var speech = document.getElementById("speech");
+  var choices = document.getElementById("choices");
+  var orb = document.getElementById("orb");
+  var timer = null, chars = [], pos = 0, doneCb = null;
+  var state = { sign: 0, topic: "", qi: 0, ans: [] };
+
+  function splitText(text) {
+    if (window.Intl && Intl.Segmenter) {
+      try {
+        return Array.from(new Intl.Segmenter("hi", { granularity: "grapheme" }).segment(text), function (x) { return x.segment; });
+      } catch (e) {}
+    }
+    return Array.from(text);
+  }
+
+  function say(text, cb) {
+    clearInterval(timer);
+    chars = splitText(text); pos = 0; doneCb = cb || null;
+    choices.innerHTML = ""; choices.className = "";
+    orb.className = "speaking";
+    speech.textContent = "";
+    timer = setInterval(function () {
+      pos++;
+      speech.textContent = chars.slice(0, pos).join("");
+      if (pos >= chars.length) finish();
+    }, 24);
+  }
+  function finish() {
+    clearInterval(timer);
+    pos = chars.length;
+    speech.textContent = chars.join("");
+    orb.className = "";
+    if (doneCb) { var f = doneCb; doneCb = null; f(); }
+  }
+  function skip() { if (doneCb) finish(); }
+  orb.onclick = skip;
+  speech.onclick = skip;
+
+  function buttons(list, cls) {
+    choices.innerHTML = "";
+    choices.className = cls || "";
+    list.forEach(function (b) {
+      var el = document.createElement("button");
+      el.className = "btn";
+      el.textContent = b[0];
+      el.onclick = b[1];
+      choices.appendChild(el);
+    });
+  }
+
+  function start() {
+    say("सितारों का ओरेकल आपका स्वागत करता है। अपनी राशि बताइए, और आपका दिन पढ़ा जाएगा।", function () {
+      buttons(signs.map(function (s, i) {
+        return [s[0] + " " + s[1], function () { pickSign(i); }];
+      }), "signs");
+    });
+  }
+
+  function pickSign(i) {
+    state.sign = i;
+    var today = new Date();
+    var begin = new Date(today.getFullYear(), 0, 0);
+    var d = Math.floor((today - begin) / 86400000);
+    var text = signs[i][1] + " राशि, यह रहा आपका आज का राशिफल।\n\n" +
+      "प्रेम: " + love[(d + i * 5) % love.length] + "\n\n" +
+      "काम: " + work[(d * 2 + i * 7) % work.length] + "\n\n" +
+      "मन: " + mood[(d * 3 + i * 3) % mood.length];
+    say(text, function () {
+      buttons([
+        ["✨ अपनी स्थिति के बारे में सितारों से पूछें", chooseTopic],
+        ["दूसरी राशि चुनें", start]
+      ]);
+    });
+  }
+
+  function chooseTopic() {
+    say("आपके मन में क्या चल रहा है? कुछ सवालों के जवाब हाँ या नहीं में दीजिए, और सितारे बताएँगे कि वे क्या देख रहे हैं।", function () {
+      var list = Object.keys(topics).map(function (k) {
+        return [topics[k].label, function () { askTopic(k); }];
+      });
+      list.push(["वापस", function () { pickSign(state.sign); }]);
+      buttons(list);
+    });
+  }
+
+  function askTopic(key) {
+    state.topic = key; state.qi = 0; state.ans = [];
+    nextQ();
+  }
+
+  function nextQ() {
+    var t = topics[state.topic];
+    if (state.qi >= t.qs.length) { giveReading(); return; }
+    var q = t.qs[state.qi];
+    say(q[0], function () {
+      buttons([
+        ["हाँ", function () { state.ans.push(q[1]); state.qi++; nextQ(); }],
+        ["नहीं", function () { state.ans.push(q[2]); state.qi++; nextQ(); }]
+      ], "yn");
+    });
+  }
+
+  function giveReading() {
+    var t = topics[state.topic];
+    var text = "सितारों ने आपकी बात सुन ली।\n\n" +
+      state.ans.join(" ") + "\n\n" +
+      elementLine[signs[state.sign][2]] + "\n\n" +
+      t.closing;
+    say(text, function () {
+      buttons([
+        ["किसी और बारे में पूछें", chooseTopic],
+        ["नई राशि सुनें", start]
+      ]);
+    });
+  }
+
+  // drifting stars
+  for (var n = 0; n < 22; n++) {
+    var s = document.createElement("div");
+    var size = 2 + Math.random() * 4;
+    s.className = "star";
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (18 + Math.random() * 30) + "s, " + (3 + Math.random() * 5) + "s";
+    s.style.animationDelay = (-Math.random() * 40) + "s, " + (-Math.random() * 6) + "s";
+    document.body.appendChild(s);
+  }
+
+  start();
+</script>
+</body>
+</html>
