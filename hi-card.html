@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>आपका आज का स्टार कार्ड - डेली स्टार्स</title>
+<meta name="description" content="आज के मार्गदर्शन का एक छोटा संदेश पाने के लिए अपना मुफ़्त दैनिक स्टार कार्ड पलटिए। हर दिन एक नया कार्ड, स्ट्रीक काउंटर के साथ।">
+<style>
+  body {
+    margin: 0; padding: 20px 16px 40px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; line-height: 1.6; overflow-x: hidden;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .star {
+    position: fixed; border-radius: 50%; background: #fff;
+    box-shadow: 0 0 10px 2px #c77dff; pointer-events: none; z-index: 0;
+    animation: rise linear infinite, twinkle ease-in-out infinite;
+  }
+  @keyframes rise { from { transform: translateY(105vh); } to { transform: translateY(-10vh); } }
+  @keyframes twinkle { 0%, 100% { opacity: 0.2; } 50% { opacity: 0.9; } }
+
+  .wrap { position: relative; z-index: 1; max-width: 460px; margin: 0 auto; text-align: center; }
+  .langbar { text-align: right; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.85rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+  }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; margin: 8px 0 0; }
+  .sub { opacity: 0.85; font-style: italic; margin: 4px 0 0; }
+  #streak { margin-top: 14px; font-size: 1.05rem; color: #e0aaff; text-shadow: 0 0 12px #c77dff; min-height: 1.5em; }
+
+  .scene { perspective: 900px; width: 220px; height: 320px; margin: 24px auto; cursor: pointer; }
+  .card3d { position: relative; width: 100%; height: 100%; transition: transform 1s; transform-style: preserve-3d; -webkit-transform-style: preserve-3d; }
+  .card3d.flipped { transform: rotateY(180deg); }
+  .face {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 18px;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 18px; box-sizing: border-box;
+  }
+  .back {
+    background: radial-gradient(circle at 50% 40%, #9d4edd, #3d0a6b 70%);
+    border: 2px solid rgba(224,170,255,0.8);
+    animation: glowcard 3.5s ease-in-out infinite;
+    font-size: 3.4rem;
+  }
+  .back small { font-size: 0.95rem; margin-top: 12px; opacity: 0.9; }
+  @keyframes glowcard {
+    0%, 100% { box-shadow: 0 0 20px rgba(199,125,255,0.5); }
+    50% { box-shadow: 0 0 42px rgba(224,170,255,0.95); }
+  }
+  .front {
+    transform: rotateY(180deg);
+    background: linear-gradient(160deg, #2a0a52, #14134a);
+    border: 2px solid rgba(224,170,255,0.9);
+    box-shadow: 0 0 30px rgba(199,125,255,0.6);
+  }
+  .front .big { font-size: 4rem; }
+  .front .name { font-size: 1.4rem; margin-top: 12px; text-shadow: 0 0 14px #c77dff; }
+
+  #msg {
+    display: none; margin: 0 auto; padding: 18px; border-radius: 16px; text-align: left;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.45); line-height: 1.8;
+  }
+  .btn {
+    display: inline-block; margin: 16px 6px 0; padding: 12px 22px; font-family: Georgia, serif;
+    font-size: 1rem; color: #f3e8ff; cursor: pointer; border-radius: 22px;
+    border: 1px solid rgba(199,125,255,0.7); background: rgba(199,125,255,0.25);
+    box-shadow: 0 0 16px rgba(199,125,255,0.45); text-decoration: none;
+  }
+  .btn:active { background: rgba(199,125,255,0.5); }
+  #after { display: none; }
+  .foot { font-size: 0.78rem; opacity: 0.65; margin-top: 28px; line-height: 1.7; }
+  a { color: #e0aaff; }
+  @media (prefers-reduced-motion: reduce) { .star, .back { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar"><a href="card.html">English</a></div>
+  <h1>आपका आज का कार्ड ✨</h1>
+  <p class="sub">आज का संदेश देखने के लिए कार्ड को छूइए</p>
+  <div id="streak"></div>
+
+  <div class="scene" id="scene">
+    <div class="card3d" id="card3d">
+      <div class="face back"><div>🔮</div><small>पलटने के लिए छूएँ</small></div>
+      <div class="face front"><div class="big" id="emoji"></div><div class="name" id="name"></div></div>
+    </div>
+  </div>
+
+  <div id="msg"></div>
+
+  <div id="after">
+    <button class="btn" id="shareBtn">मेरा कार्ड शेयर करें</button>
+    <a class="btn" href="hi-oracle.html">ओरेकल से पूछें</a>
+    <p class="foot">कल एक नया कार्ड आएगा। अपनी स्ट्रीक बनाए रखने के लिए वापस आइए। 🔥</p>
+  </div>
+
+  <p class="foot">
+    केवल मनोरंजन और आत्म-चिंतन के लिए। आपकी स्ट्रीक सिर्फ़ आपके अपने ब्राउज़र में सेव होती है।<br><br>
+    <a href="hi-index.html">← दैनिक राशिफल</a>
+  </p>
+</div>
+
+<script>
+  var cards = [
+    ["🌙","चंद्रमा","आज अपने अंतर्मन की सुनिए। भीतर जो बात शांत और पक्की लगे, वह सुनने लायक है।"],
+    ["☀️","सूर्य","आपके आसपास अच्छी ऊर्जा है। उसे बाँटिए। कोई सरल बात उम्मीद से ज़्यादा उजली निकलेगी।"],
+    ["⭐","तारा","उम्मीद लौट रही है। जिस चीज़ की आपको परवाह है, उसकी ओर एक छोटा कदम आपकी सोच से ज़्यादा मायने रखता है।"],
+    ["🌊","ज्वार","चीज़ों को ज़बरदस्ती करने के बजाय बहने दीजिए। जो आपके लिए है, वह अपने समय पर आएगा।"],
+    ["🦋","तितली","एक कोमल बदलाव चल रहा है। जो अब आपके काम का नहीं, उसे छोड़ दीजिए और नए के लिए जगह बनाइए।"],
+    ["🗝️","कुंजी","जवाब आपके पास पहले से है। जिस बात को आपने अनदेखा किया, उसे एक बार फिर देखिए।"],
+    ["🔥","चिंगारी","जिस काम को आप टालते आ रहे हैं, उसे शुरू कीजिए। रफ़्तार एक छोटे से कदम से बनती है।"],
+    ["🌿","बगीचा","धैर्य का फल मिलता है। जो ज़रूरी है उसकी देखभाल करते रहिए, बढ़त जल्द दिखेगी।"],
+    ["🪞","दर्पण","ग़ौर कीजिए कि दूसरे आपको क्या लौटाकर दिखाते हैं। अपने बारे में एक सच नरमी से सामने आ रहा है।"],
+    ["🕊️","शांति का कबूतर","आज शांति आपकी पहुँच में है। जो एक चिंता आप ढो रहे हैं, उसे छोड़िए और गहरी साँस लीजिए।"],
+    ["🌈","इंद्रधनुष","भारी दौर के बाद राहत आती है। उस उजली बात को ढूँढिए जो पहले से दिखने लगी है।"],
+    ["🧭","दिशासूचक","आपकी दिशा आपकी सोच से ज़्यादा साफ़ है। वही रास्ता चुनिए जो ईमानदार लगे, जल्दबाज़ी वाला नहीं।"],
+    ["🌌","ब्रह्मांड","आज बड़ा सोचिए। आपकी स्थिति एक बहुत बड़ी कहानी का एक अध्याय है।"],
+    ["🪶","पंख","हल्का रहना एक चुनाव है। कोई छोटा और दयालु काम कीजिए जो आपका मन हल्का करे।"],
+    ["🏔️","पर्वत","नीचे से चुनौती बड़ी दिखती है। उसे एक-एक स्थिर कदम में पार कीजिए।"],
+    ["💫","मनोकामना","साफ़ तय कीजिए कि आप क्या चाहते हैं। उसे ज़ोर से कहिए और देखिए कि वह आपके चुनावों को कैसे आकार देता है।"]
+  ];
+
+  function ymd(d) { return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function store(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+  function load(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+
+  var today = new Date();
+  var todayKey = ymd(today);
+  var yesterdayKey = ymd(new Date(Date.now() - 86400000));
+  var begin = new Date(today.getFullYear(), 0, 0);
+  var dayNum = Math.floor((today - begin) / 86400000);
+
+  var seed = parseInt(load("ds_seed"), 10);
+  if (isNaN(seed)) { seed = Math.floor(Math.random() * 1000); store("ds_seed", String(seed)); }
+  var pick = cards[(dayNum * 7 + seed) % cards.length];
+
+  var card3d = document.getElementById("card3d");
+  var msg = document.getElementById("msg");
+  var after = document.getElementById("after");
+  var streakEl = document.getElementById("streak");
+
+  document.getElementById("emoji").textContent = pick[0];
+  document.getElementById("name").textContent = pick[1];
+
+  function showStreak(n) {
+    var line = "🔥 " + n + " दिन की लगातार स्ट्रीक";
+    if (n >= 7) line += " · पूरा एक हफ़्ता!";
+    streakEl.textContent = line;
+  }
+
+  function reveal(animate) {
+    card3d.className = "card3d flipped";
+    var delay = animate ? 900 : 0;
+    setTimeout(function () {
+      msg.textContent = pick[2];
+      msg.style.display = "block";
+      after.style.display = "block";
+    }, delay);
+  }
+
+  var last = load("ds_last");
+  var streak = parseInt(load("ds_streak"), 10) || 0;
+
+  if (last === todayKey) {
+    showStreak(streak || 1);
+    reveal(false);
+  } else {
+    document.getElementById("scene").onclick = function () {
+      if (card3d.className.indexOf("flipped") !== -1) return;
+      streak = (last === yesterdayKey) ? streak + 1 : 1;
+      store("ds_last", todayKey);
+      store("ds_streak", String(streak));
+      showStreak(streak);
+      reveal(true);
+    };
+  }
+
+  document.getElementById("shareBtn").onclick = function () {
+    var btn = this;
+    var text = "आज का मेरा डेली स्टार्स कार्ड: " + pick[0] + " " + pick[1] + "। " + pick[2];
+    var url = location.href;
+    if (navigator.share) {
+      navigator.share({ title: "डेली स्टार्स", text: text, url: url }).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(text + " " + url).then(function () { btn.textContent = "कॉपी हो गया!"; });
+    }
+  };
+
+  // drifting stars
+  for (var n = 0; n < 22; n++) {
+    var s = document.createElement("div");
+    var size = 2 + Math.random() * 4;
+    s.className = "star";
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (18 + Math.random() * 30) + "s, " + (3 + Math.random() * 5) + "s";
+    s.style.animationDelay = (-Math.random() * 40) + "s, " + (-Math.random() * 6) + "s";
+    document.body.appendChild(s);
+  }
+</script>
+</body>
+</html>
