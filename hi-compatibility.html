@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>राशि मेल जाँच - डेली स्टार्स</title>
+<meta name="description" content="मुफ़्त राशि मेल जाँच। दो राशियाँ चुनिए और उनका प्रेम और दोस्ती का मेल स्कोर देखिए।">
+<style>
+  body {
+    margin: 0; padding: 24px 16px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; line-height: 1.7;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .box { max-width: 460px; margin: 0 auto; text-align: center; }
+  .langbar { text-align: right; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.85rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+  }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; }
+  select {
+    width: 100%; padding: 12px; margin: 6px 0 14px; font-size: 1.05rem;
+    border-radius: 12px; border: 1px solid rgba(199,125,255,0.6);
+    background: rgba(255,255,255,0.1); color: #f3e8ff; font-family: Georgia, serif;
+  }
+  select option { color: #1a0033; }
+  label { display: block; text-align: left; font-size: 0.95rem; opacity: 0.85; }
+  button {
+    width: 100%; padding: 14px; font-size: 1.1rem; font-family: Georgia, serif;
+    border-radius: 14px; border: 1px solid rgba(199,125,255,0.8);
+    background: rgba(199,125,255,0.25); color: #f3e8ff; cursor: pointer;
+    box-shadow: 0 0 18px rgba(199,125,255,0.5);
+  }
+  button:active { background: rgba(199,125,255,0.5); }
+  #out {
+    display: none; margin-top: 24px; padding: 20px; text-align: left;
+    border-radius: 16px; background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.5);
+  }
+  #pair { text-align: center; font-size: 1.3rem; text-shadow: 0 0 14px #c77dff; }
+  #score { text-align: center; font-size: 2.4rem; margin: 4px 0; color: #e0aaff; text-shadow: 0 0 18px #c77dff; }
+  #label { text-align: center; opacity: 0.9; margin-bottom: 12px; }
+  .bar { height: 10px; border-radius: 6px; background: rgba(255,255,255,0.15); overflow: hidden; margin-bottom: 14px; }
+  .fill { height: 100%; width: 0; background: linear-gradient(90deg, #9d4edd, #e0aaff); transition: width 1s ease; }
+  a { color: #e0aaff; }
+  .note { font-size: 0.78rem; opacity: 0.6; margin-top: 24px; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="langbar"><a href="compatibility.html">English</a></div>
+  <h1>राशि मेल जाँच ✨</h1>
+  <p>दो राशियाँ चुनिए और देखिए कि वे कितनी मेल खाती हैं।</p>
+
+  <label for="a">पहली राशि</label>
+  <select id="a"></select>
+  <label for="b">दूसरी राशि</label>
+  <select id="b"></select>
+  <button onclick="check()">हमारा मेल देखें</button>
+
+  <div id="out">
+    <div id="pair"></div>
+    <div id="score"></div>
+    <div id="label"></div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <p id="text"></p>
+    <p id="tip"></p>
+  </div>
+
+  <p><a href="hi-index.html">← दैनिक राशिफल</a></p>
+  <p class="note">केवल मनोरंजन के लिए।</p>
+</div>
+
+<script>
+  var signs = [
+    ["♈","मेष"],["♉","वृषभ"],["♊","मिथुन"],["♋","कर्क"],
+    ["♌","सिंह"],["♍","कन्या"],["♎","तुला"],["♏","वृश्चिक"],
+    ["♐","धनु"],["♑","मकर"],["♒","कुंभ"],["♓","मीन"]
+  ];
+  var elementNames = ["अग्नि","पृथ्वी","वायु","जल"];
+
+  var info = {
+    "0-0": [82, "दो अग्नि राशियाँ मिलकर साहसी, तेज़ और ऊर्जा से भरी जोड़ी बनाती हैं। आप एक-दूसरे को नई चीज़ें आज़माने के लिए प्रेरित करते हैं और ऊब शायद ही कभी होती है। जोखिम यह है कि दो मज़बूत इच्छाएँ टकरा सकती हैं, इसलिए बारी-बारी से नेतृत्व करना सीखिए।", "सुझाव: साथ मिलकर रोमांच की योजना बनाइए और पहले ही तय कर लीजिए कि किस बात का फ़ैसला कौन करेगा।"],
+    "0-1": [62, "अग्नि तेज़ी से चलती है जबकि पृथ्वी स्थिर रफ़्तार पसंद करती है। अग्नि जोश लाती है, पृथ्वी स्थिरता, और दोनों एक-दूसरे को कुछ क़ीमती सिखा सकते हैं। तनाव तब आता है जब एक को जल्दबाज़ी महसूस हो और दूसरे को रोके जाने का एहसास।", "सुझाव: बीच का रास्ता निकालिए: पक्की योजना, पर आश्चर्य के लिए थोड़ी जगह।"],
+    "0-2": [88, "वायु अग्नि को हवा देती है, इसलिए यह राशिचक्र की सबसे जीवंत जोड़ियों में से एक है। बातचीत बहती रहती है, विचार चिंगारी की तरह उठते हैं और खूब हँसी रहती है। थोड़ी गहराई भी बनाए रखिए ताकि यह मज़ा लंबा चले।", "सुझाव: मज़ाक के साथ-साथ अपने लक्ष्य भी साझा कीजिए।"],
+    "0-3": [58, "अग्नि और जल या तो भाप बना सकते हैं या एक-दूसरे को बुझा सकते हैं। अग्नि सीधी बात करती है और जल संवेदनशील होता है, इसलिए लापरवाही से बोले शब्द चोट पहुँचा सकते हैं। दया और धैर्य के साथ ये गर्माहट और भावना का संतुलन बना लेते हैं।", "सुझाव: बात नरमी से कहिए और देखिए कि वह कैसे पहुँची।"],
+    "1-1": [84, "दो पृथ्वी राशियाँ कुछ ठोस और टिकाऊ बनाती हैं। आप वफ़ादारी, आराम और भरोसेमंद दिनचर्या को महत्व देते हैं और एक-दूसरे की सुरक्षा की ज़रूरत समझते हैं। ध्यान रहे कि आदतों में फँसकर ठहर न जाएँ।", "सुझाव: हर महीने कुछ नया करने का समय तय कीजिए।"],
+    "1-2": [60, "पृथ्वी योजनाएँ पसंद करती है और वायु संभावनाएँ। पृथ्वी को वायु बिखरी हुई लग सकती है, और वायु को पृथ्वी कठोर। यह जोड़ी तब चलती है जब दोनों एक-दूसरे के सोचने के तरीके का सम्मान करें।", "सुझाव: एक व्यक्ति योजना बनाए और दूसरा उसमें सहजता जोड़े।"],
+    "1-3": [90, "पृथ्वी जल को सुरक्षित ठिकाना देती है, और जल पृथ्वी को गर्माहट और गहराई। यह पोषण करने वाली, वफ़ादार जोड़ी है जो घर जैसी लगती है। ध्यान रखिए कि आराम कठिन बातों से बचने का बहाना न बन जाए।", "सुझाव: चीज़ें आसान लगें तब भी बात करते रहिए।"],
+    "2-2": [80, "दो वायु राशियाँ जिज्ञासा, हास्य और कभी न ख़त्म होने वाली बातचीत साझा करती हैं। आप एक-दूसरे को आज़ादी देते हैं और विषयों की कमी कभी नहीं होती। भावनाएँ कभी-कभी दिमाग़ में ही रह जाती हैं, इसलिए उनके लिए भी जगह बनाइए।", "सुझाव: सिर्फ़ यह नहीं कि आप क्या सोचते हैं, यह भी बताइए कि आप कैसा महसूस करते हैं।"],
+    "2-3": [64, "वायु सोचकर चलती है जबकि जल पहले महसूस करता है। एक-दूसरे को कभी बहुत हल्का तो कभी बहुत भारी लग सकता है। सहानुभूति के साथ वायु महसूस करना सीखती है और जल पीछे हटकर बड़ी तस्वीर देखना।", "सुझाव: पहले सुनिए, फिर बात करके सुलझाइए।"],
+    "3-3": [86, "दो जल राशियाँ बिना ज़्यादा शब्दों के एक-दूसरे को समझ लेती हैं। यह रिश्ता गहरा, देखभाल भरा और सहज होता है। मन के उतार-चढ़ाव एक-दूसरे को बढ़ा सकते हैं, इसलिए ख़ुद को ज़मीन से जोड़ना याद रखिए।", "सुझाव: मन को सँभालने के लिए साथ में खुली हवा में समय बिताइए।"]
+  };
+
+  function labelFor(s) {
+    if (s >= 90) return "ब्रह्मांडीय मेल";
+    if (s >= 80) return "बहुत बढ़िया मेल";
+    if (s >= 70) return "अच्छा मेल";
+    if (s >= 60) return "मेहनत माँगता है, पर सार्थक";
+    return "विपरीत आकर्षित करते हैं";
+  }
+
+  var A = document.getElementById("a");
+  var B = document.getElementById("b");
+  signs.forEach(function (s, i) {
+    A.innerHTML += "<option value=\"" + i + "\">" + s[0] + " " + s[1] + "</option>";
+    B.innerHTML += "<option value=\"" + i + "\">" + s[0] + " " + s[1] + "</option>";
+  });
+  B.value = "1";
+
+  function check() {
+    var x = parseInt(A.value, 10);
+    var y = parseInt(B.value, 10);
+    var ex = x % 4, ey = y % 4;
+    var key = Math.min(ex, ey) + "-" + Math.max(ex, ey);
+    var data = info[key];
+    var score = Math.min(99, data[0] + ((x * y + x + y) % 11));
+
+    document.getElementById("pair").textContent =
+      signs[x][0] + " " + signs[x][1] + "  +  " + signs[y][0] + " " + signs[y][1];
+    document.getElementById("score").textContent = score + "%";
+    document.getElementById("label").textContent =
+      labelFor(score) + " · " + elementNames[ex] + " + " + elementNames[ey];
+    document.getElementById("text").textContent = data[1];
+    document.getElementById("tip").textContent = data[2];
+    document.getElementById("out").style.display = "block";
+    var fill = document.getElementById("fill");
+    fill.style.width = "0";
+    setTimeout(function () { fill.style.width = score + "%"; }, 50);
+  }
+</script>
+</body>
+</html>
