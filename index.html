@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Daily Stars - Free Daily Horoscopes</title>
 <meta name="description" content="Free daily horoscopes for all 12 zodiac signs: love, work and mood readings that change every day. Flip your daily card and ask the Oracle.">
@@ -39,7 +40,14 @@
     0%, 100% { opacity: 0.2; }
     50%      { opacity: 0.9; }
   }
-  h1, h2, p, .grid, #result, .note, .explore, .actions { position: relative; z-index: 1; }
+  h1, h2, p, .grid, #result, .note, .explore, .actions, .langbar { position: relative; z-index: 1; }
+  .langbar { text-align: right; max-width: 420px; margin: 0 auto; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.95rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+    box-shadow: 0 0 12px rgba(199,125,255,0.4);
+  }
   h1 {
     text-shadow: 0 0 20px #c77dff;
     font-size: 2rem;
@@ -141,6 +149,8 @@
 </style>
 </head>
 <body>
+  <div class="langbar"><a href="hi-index.html">हिन्दी</a></div>
+
   <h1>Daily Stars ✨</h1>
   <div class="actions">
     <a href="oracle.html">🔮 Ask the Oracle</a>
