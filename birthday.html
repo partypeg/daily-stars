@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Birthday Toolkit: Age Calculator, Next Birthday and Zodiac Sign - Daily Stars</title>
+<meta name="description" content="Free birthday toolkit. Enter your date of birth to get your exact age, next birthday countdown, zodiac sign, Chinese zodiac, birthstone, life path number and more.">
+<style>
+  body {
+    margin: 0; padding: 20px 16px 40px; min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff; font-family: Georgia, serif; line-height: 1.6;
+  }
+  @keyframes drift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .wrap { max-width: 460px; margin: 0 auto; text-align: center; }
+  .langbar { text-align: right; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.95rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+  }
+  h1 { text-shadow: 0 0 20px #c77dff; font-size: 1.8rem; margin: 10px 0 4px; }
+  .sub { opacity: 0.85; margin: 0 0 18px; font-style: italic; }
+  label { display: block; text-align: left; font-size: 0.9rem; opacity: 0.85; }
+  input[type=date] {
+    display: block; width: 100%; box-sizing: border-box; min-height: 54px;
+    padding: 12px; margin: 6px 0 14px; font-size: 1.15rem; font-family: Georgia, serif;
+    color: #f3e8ff; background: rgba(255,255,255,0.1); text-align: center;
+    border: 1px solid rgba(199,125,255,0.7); border-radius: 14px; color-scheme: dark;
+    -webkit-appearance: none; appearance: none;
+  }
+  button.main {
+    width: 100%; padding: 15px; font-size: 1.1rem; font-family: Georgia, serif; color: #fff; cursor: pointer;
+    border-radius: 14px; border: 1px solid rgba(224,170,255,0.9);
+    background: radial-gradient(circle at 30% 30%, #c77dff, #7b2cbf);
+    box-shadow: 0 0 24px rgba(199,125,255,0.6);
+  }
+  button.main:active { opacity: 0.85; }
+  #err { color: #ffb3c7; min-height: 1.4em; margin-top: 10px; }
+  #out { text-align: left; }
+  .panel {
+    margin: 16px 0; padding: 18px; border-radius: 16px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(199,125,255,0.6);
+    box-shadow: 0 0 20px rgba(199,125,255,0.35);
+  }
+  .panel h3 { margin: 0 0 8px; font-size: 0.85rem; color: #e0aaff; letter-spacing: 1px; text-transform: uppercase; }
+  .big { font-size: 1.45rem; text-shadow: 0 0 14px #c77dff; line-height: 1.35; }
+  .small { font-size: 0.9rem; opacity: 0.85; margin-top: 6px; }
+  .row { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid rgba(199,125,255,0.2); }
+  .row:first-of-type { border-top: none; }
+  .row span:first-child { opacity: 0.8; }
+  .row span:last-child { text-align: right; }
+  .links { margin-top: 10px; font-size: 0.95rem; }
+  a { color: #e0aaff; }
+  #after { display: none; text-align: center; }
+  .btn {
+    display: inline-block; margin: 8px 6px 0; padding: 12px 20px; font-family: Georgia, serif; font-size: 1rem;
+    color: #f3e8ff; cursor: pointer; border-radius: 22px; text-decoration: none;
+    border: 1px solid rgba(199,125,255,0.7); background: rgba(199,125,255,0.25);
+    box-shadow: 0 0 16px rgba(199,125,255,0.45);
+  }
+  .foot { font-size: 0.75rem; opacity: 0.6; margin-top: 26px; line-height: 1.6; }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langbar"><a href="hi-birthday.html">हिन्दी</a></div>
+  <h1>Birthday Toolkit 🎂</h1>
+  <p class="sub">Enter your date of birth and get everything.</p>
+
+  <label for="dob">Date of birth</label>
+  <input type="date" id="dob" min="1900-01-01">
+  <button class="main" id="go">Show my toolkit</button>
+  <div id="err"></div>
+
+  <div id="out"></div>
+
+  <div id="after">
+    <button class="btn" id="shareBtn">Share my results</button>
+    <a class="btn" href="index.html">Daily horoscope</a>
+    <a class="btn" href="oracle.html">Ask the Oracle</a>
+  </div>
+
+  <p class="foot">
+    Your date of birth stays on your device. Nothing is saved or sent anywhere.<br>
+    For fun and information. The moon phase is approximate. Zodiac signs follow Western (sun sign) astrology.<br><br>
+    <a href="index.html">← Back to Daily Stars</a>
+  </p>
+</div>
+
+<script>
+  var weekdays = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+  var signs = [
+    ["♑","Capricorn","Dec 22 - Jan 19","Earth","Cardinal","Disciplined, ambitious and patient."],
+    ["♒","Aquarius","Jan 20 - Feb 18","Air","Fixed","Original, independent and forward-thinking."],
+    ["♓","Pisces","Feb 19 - Mar 20","Water","Mutable","Dreamy, compassionate and imaginative."],
+    ["♈","Aries","Mar 21 - Apr 19","Fire","Cardinal","Bold, quick and direct."],
+    ["♉","Taurus","Apr 20 - May 20","Earth","Fixed","Steady, loyal and comfort-loving."],
+    ["♊","Gemini","May 21 - Jun 20","Air","Mutable","Curious, chatty and quick-witted."],
+    ["♋","Cancer","Jun 21 - Jul 22","Water","Cardinal","Caring, intuitive and protective."],
+    ["♌","Leo","Jul 23 - Aug 22","Fire","Fixed","Warm, generous and radiant."],
+    ["♍","Virgo","Aug 23 - Sep 22","Earth","Mutable","Thoughtful, precise and helpful."],
+    ["♎","Libra","Sep 23 - Oct 22","Air","Cardinal","Balanced, fair-minded and graceful."],
+    ["♏","Scorpio","Oct 23 - Nov 21","Water","Fixed","Deep, perceptive and passionate."],
+    ["♐","Sagittarius","Nov 22 - Dec 21","Fire","Mutable","Adventurous, optimistic and free-spirited."]
+  ];
+  var cut = [20,19,21,20,21,21,23,23,23,23,22,22];
+
+  var animals = ["🐀 Rat","🐂 Ox","🐅 Tiger","🐇 Rabbit","🐉 Dragon","🐍 Snake","🐎 Horse","🐐 Goat","🐒 Monkey","🐓 Rooster","🐕 Dog","🐖 Pig"];
+  var stones = ["Garnet","Amethyst","Aquamarine","Diamond","Emerald","Pearl","Ruby","Peridot","Sapphire","Opal","Topaz","Turquoise"];
+  var flowers = ["Carnation","Violet","Daffodil","Daisy","Lily of the valley","Rose","Larkspur","Gladiolus","Aster","Marigold","Chrysanthemum","Narcissus"];
+  var phases = ["🌑 New Moon","🌒 Waxing Crescent","🌓 First Quarter","🌔 Waxing Gibbous","🌕 Full Moon","🌖 Waning Gibbous","🌗 Last Quarter","🌘 Waning Crescent"];
+
+  var lifePath = {
+    1: ["The Leader", "Independent, driven and original. You like to start things and go your own way."],
+    2: ["The Peacemaker", "Gentle, cooperative and sensitive. You bring people together."],
+    3: ["The Creator", "Expressive, social and creative. You light up a room with ideas."],
+    4: ["The Builder", "Practical, steady and disciplined. You build things that last."],
+    5: ["The Explorer", "Curious, adaptable and freedom-loving. You thrive on change."],
+    6: ["The Nurturer", "Caring, responsible and family-minded. People rely on your warmth."],
+    7: ["The Seeker", "Thoughtful, analytical and reflective. You look for the deeper truth."],
+    8: ["The Achiever", "Ambitious, organised and goal-driven. You aim high and follow through."],
+    9: ["The Humanitarian", "Compassionate, idealistic and generous. You care about the bigger picture."],
+    11: ["The Illuminator", "A master number: intuitive, inspiring and sensitive."],
+    22: ["The Master Builder", "A master number: you can turn big visions into reality."],
+    33: ["The Master Teacher", "A master number: nurturing, uplifting and devoted to others."]
+  };
+
+  function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+  function fmt(n) { return n.toLocaleString("en-US"); }
+
+  function diffYMD(from, to) {
+    var y = to.getFullYear() - from.getFullYear();
+    var m = to.getMonth() - from.getMonth();
+    var d = to.getDate() - from.getDate();
+    if (d < 0) { m--; d += new Date(to.getFullYear(), to.getMonth(), 0).getDate(); }
+    if (m < 0) { y--; m += 12; }
+    return [y, m, d];
+  }
+
+  function digitSum(n) { var s = 0; while (n > 0) { s += n % 10; n = Math.floor(n / 10); } return s; }
+  function reduce(n) {
+    while (n > 9 && n !== 11 && n !== 22 && n !== 33) { n = digitSum(n); }
+    return n;
+  }
+
+  function moonIndex(y, m, d) {
+    var ref = Date.UTC(2000, 0, 6, 18, 14);
+    var t = Date.UTC(y, m, d, 12, 0);
+    var syn = 29.530588853;
+    var age = (((t - ref) / 86400000) % syn + syn) % syn;
+    if (age < 1.84566) return 0;
+    if (age < 5.53699) return 1;
+    if (age < 9.22831) return 2;
+    if (age < 12.91963) return 3;
+    if (age < 16.61096) return 4;
+    if (age < 20.30228) return 5;
+    if (age < 23.99361) return 6;
+    if (age < 27.68493) return 7;
+    return 0;
+  }
+
+  function generation(y) {
+    if (y <= 1945) return "Silent Generation";
+    if (y <= 1964) return "Baby Boomer";
+    if (y <= 1980) return "Generation X";
+    if (y <= 1996) return "Millennial";
+    if (y <= 2012) return "Generation Z";
+    return "Generation Alpha";
+  }
+
+  function row(a, b) { return '<div class="row"><span>' + a + '</span><span>' + b + '</span></div>'; }
+  function panel(title, inner) { return '<div class="panel"><h3>' + title + '</h3>' + inner + '</div>'; }
+
+  var shareText = "";
+  var dobInput = document.getElementById("dob");
+  (function () {
+    var n = new Date();
+    var mm = ("0" + (n.getMonth() + 1)).slice(-2);
+    var dd = ("0" + n.getDate()).slice(-2);
+    dobInput.max = n.getFullYear() + "-" + mm + "-" + dd;
+  })();
+
+  function compute() {
+    var err = document.getElementById("err");
+    var out = document.getElementById("out");
+    var after = document.getElementById("after");
+    err.textContent = "";
+    var v = dobInput.value;
+    if (!v) { err.textContent = "Please choose your date of birth."; out.innerHTML = ""; after.style.display = "none"; return; }
+
+    var p = v.split("-");
+    var y = parseInt(p[0], 10), m = parseInt(p[1], 10) - 1, d = parseInt(p[2], 10);
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var dob = new Date(y, m, d);
+    if (isNaN(dob.getTime()) || y < 1900 || dob > today) {
+      err.textContent = "Please enter a valid past date (1900 or later).";
+      out.innerHTML = ""; after.style.display = "none"; return;
+    }
+
+    var age = diffYMD(dob, today);
+    var utcDob = Date.UTC(y, m, d);
+    var utcToday = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+    var totalDays = Math.round((utcToday - utcDob) / 86400000);
+    var totalMonths = age[0] * 12 + age[1];
+    var totalWeeks = Math.floor(totalDays / 7);
+
+    var next = new Date(today.getFullYear(), m, d);
+    if (next < today) { next = new Date(today.getFullYear() + 1, m, d); }
+    var daysLeft = Math.round((Date.UTC(next.getFullYear(), next.getMonth(), next.getDate()) - utcToday) / 86400000);
+    var turning = next.getFullYear() - y;
+    var nextText = weekdays[next.getDay()] + ", " + next.getDate() + " " + months[next.getMonth()] + " " + next.getFullYear();
+
+    var si = d >= cut[m] ? m + 1 : m;
+    si = si % 12;
+    var sg = signs[si];
+
+    var animalIdx = ((y - 1900) % 12 + 12) % 12;
+    var lp = reduce(reduce(m + 1) + reduce(d) + reduce(y));
+    var lpData = lifePath[lp];
+    var moon = phases[moonIndex(y, m, d)];
+
+    var html = "";
+
+    html += panel("🎂 Your exact age",
+      '<div class="big">' + plural(age[0], "year") + ", " + plural(age[1], "month") + ", " + plural(age[2], "day") + '</div>' +
+      '<div class="small">Born on a ' + weekdays[dob.getDay()] + ", " + d + " " + months[m] + " " + y + '.</div>');
+
+    var nbBig = daysLeft === 0 ? "Today! Happy birthday 🎉" : "In " + plural(daysLeft, "day");
+    html += panel("🎉 Next birthday",
+      '<div class="big">' + nbBig + '</div>' +
+      '<div class="small">' + (daysLeft === 0 ? "You turn " + turning + " today." : "You turn " + turning + " on " + nextText + ".") + '</div>');
+
+    html += panel("✨ Your zodiac sign",
+      '<div class="big">' + sg[0] + " " + sg[1] + '</div>' +
+      row("Dates", sg[2]) + row("Element", sg[3]) + row("Modality", sg[4]) +
+      '<div class="small">' + sg[5] + '</div>' +
+      '<div class="links"><a href="index.html">Read today\'s ' + sg[1] + ' horoscope →</a></div>');
+
+    var animalNote = m <= 1 ? '<div class="small">Born in January or February? Your Chinese zodiac animal may be the previous year\'s, depending on the date of Lunar New Year.</div>' : "";
+    html += panel("🌙 You were born under",
+      row("Moon phase (approx.)", moon) +
+      row("Chinese zodiac", animals[animalIdx]) +
+      row("Birthstone", stones[m]) +
+      row("Birth flower", flowers[m]) +
+      row("Generation", generation(y)) +
+      animalNote);
+
+    html += panel("🔢 Life path number",
+      '<div class="big">' + lp + " · " + lpData[0] + '</div>' +
+      '<div class="small">' + lpData[1] + ' Numerology is just for fun.</div>');
+
+    html += panel("📊 Your life in numbers",
+      row("Months", fmt(totalMonths)) +
+      row("Weeks", fmt(totalWeeks)) +
+      row("Days", fmt(totalDays)) +
+      row("Hours (about)", fmt(totalDays * 24)) +
+      row("Minutes (about)", fmt(totalDays * 1440)));
+
+    out.innerHTML = html;
+    after.style.display = "block";
+
+    shareText = "I am " + plural(age[0], "year") + ", " + plural(age[1], "month") + " and " + plural(age[2], "day") + " old. " +
+      sg[0] + " " + sg[1] + ", " + animals[animalIdx] + ", life path " + lp + ". " +
+      (daysLeft === 0 ? "Today is my birthday! 🎉" : "My next birthday is in " + plural(daysLeft, "day") + ". ") +
+      "Try the Birthday Toolkit:";
+
+    out.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  document.getElementById("go").onclick = compute;
+
+  document.getElementById("shareBtn").onclick = function () {
+    var btn = this;
+    var url = location.href;
+    if (navigator.share) {
+      navigator.share({ title: "Birthday Toolkit", text: shareText, url: url }).catch(function () {});
+    } else if (navigator.clipboard) {
+      navigator.clipboard.writeText(shareText + " " + url).then(function () { btn.textContent = "Copied!"; });
+    }
+  };
+</script>
+</body>
+</html>
