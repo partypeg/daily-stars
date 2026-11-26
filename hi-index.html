@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>डेली स्टार्स - मुफ़्त दैनिक राशिफल</title>
+<meta name="description" content="सभी 12 राशियों का मुफ़्त दैनिक राशिफल: प्रेम, काम और मन का हाल, हर दिन नया। अपना आज का कार्ड खोलिए और ओरेकल से पूछिए।">
+<style>
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #1a0033, #3d0a6b, #0a1a4d, #3d0a6b, #1a0033);
+    background-size: 400% 400%;
+    animation: drift 24s ease-in-out infinite;
+    color: #f3e8ff;
+    font-family: Georgia, serif;
+    line-height: 1.6;
+    text-align: center;
+    padding: 24px 16px;
+    overflow-x: hidden;
+  }
+  @keyframes drift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .star {
+    position: fixed;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 10px 2px #c77dff;
+    pointer-events: none;
+    z-index: 0;
+    animation: float linear infinite, twinkle ease-in-out infinite;
+  }
+  @keyframes float {
+    from { transform: translateY(105vh); }
+    to   { transform: translateY(-10vh); }
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.2; }
+    50%      { opacity: 0.9; }
+  }
+  h1, h2, p, .grid, #result, .note, .explore, .actions, .langbar { position: relative; z-index: 1; }
+  .langbar { text-align: right; max-width: 420px; margin: 0 auto; }
+  .langbar a {
+    display: inline-block; padding: 6px 14px; border-radius: 16px; font-size: 0.85rem;
+    color: #f3e8ff; text-decoration: none; border: 1px solid rgba(199,125,255,0.7);
+    background: rgba(255,255,255,0.08);
+  }
+  h1 {
+    text-shadow: 0 0 20px #c77dff;
+    font-size: 2rem;
+    animation: glow 5s ease-in-out infinite;
+  }
+  @keyframes glow {
+    0%, 100% { text-shadow: 0 0 12px #c77dff; }
+    50%      { text-shadow: 0 0 32px #e0aaff, 0 0 60px #9d4edd; }
+  }
+  p { opacity: 0.85; }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 6px 0 14px;
+  }
+  .actions a {
+    padding: 14px 20px;
+    border-radius: 30px;
+    color: #fff;
+    text-decoration: none;
+    background: radial-gradient(circle at 30% 30%, #c77dff, #7b2cbf);
+    border: 1px solid rgba(224,170,255,0.9);
+    box-shadow: 0 0 24px rgba(199,125,255,0.7);
+    animation: pulse 3.5s ease-in-out infinite;
+  }
+  .actions a:nth-child(2) { animation-delay: 1.7s; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 16px rgba(199,125,255,0.5); }
+    50%      { box-shadow: 0 0 36px rgba(224,170,255,0.95); }
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 420px;
+    margin: 24px auto;
+  }
+  .card {
+    padding: 18px 6px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(199,125,255,0.5);
+    box-shadow: 0 0 14px rgba(199,125,255,0.35);
+    font-size: 1.6rem;
+    cursor: pointer;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .card:nth-child(even) { animation-delay: 3s; }
+  @keyframes breathe {
+    0%, 100% { box-shadow: 0 0 10px rgba(199,125,255,0.25); }
+    50%      { box-shadow: 0 0 24px rgba(199,125,255,0.6); }
+  }
+  .card span { display: block; font-size: 0.95rem; margin-top: 6px; }
+  .card:active { background: rgba(199,125,255,0.3); }
+  #result {
+    display: none;
+    max-width: 420px;
+    margin: 0 auto 24px;
+    padding: 20px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(199,125,255,0.7);
+    box-shadow: 0 0 24px rgba(199,125,255,0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    text-align: left;
+  }
+  #result h2 { margin: 0 0 2px; text-align: center; text-shadow: 0 0 14px #c77dff; }
+  .meta { text-align: center; font-size: 0.85rem; opacity: 0.75; margin: 0 0 14px; }
+  .about { font-style: italic; opacity: 0.95; margin: 0 0 16px; line-height: 1.7; }
+  .sec { margin: 12px 0; line-height: 1.7; }
+  .sec b { color: #e0aaff; display: block; font-size: 0.95rem; letter-spacing: 1px; }
+  .lucky { margin-top: 16px; text-align: center; font-size: 0.95rem; opacity: 0.95; }
+  .explore { max-width: 420px; margin: 32px auto 0; }
+  .explore h2 { font-size: 1.15rem; color: #e0aaff; text-shadow: 0 0 12px #c77dff; margin-bottom: 12px; }
+  .explore a {
+    display: block;
+    margin: 10px 0;
+    padding: 14px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(199,125,255,0.5);
+    box-shadow: 0 0 14px rgba(199,125,255,0.3);
+    color: #f3e8ff;
+    text-decoration: none;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .explore a:active { background: rgba(199,125,255,0.3); }
+  .note { font-size: 0.78rem; opacity: 0.6; margin-top: 24px; }
+  .note a { color: #e0aaff; }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="langbar"><a href="index.html">English</a></div>
+
+  <h1>डेली स्टार्स ✨</h1>
+  <div class="actions">
+    <a href="hi-oracle.html">🔮 ओरेकल से पूछें</a>
+    <a href="hi-card.html">🃏 आज का कार्ड</a>
+  </div>
+  <p>या अपनी राशि चुनिए</p>
+
+  <div id="result">
+    <h2 id="signName"></h2>
+    <p class="meta" id="meta"></p>
+    <p class="about" id="about"></p>
+    <div class="sec"><b>प्रेम</b><span id="love"></span></div>
+    <div class="sec"><b>काम</b><span id="work"></span></div>
+    <div class="sec"><b>मन</b><span id="mood"></span></div>
+    <p class="lucky" id="lucky"></p>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="explore">
+    <h2>और जानिए</h2>
+    <a href="hi-card.html">🃏 आपका आज का स्टार कार्ड</a>
+    <a href="hi-oracle.html">🔮 ओरेकल: सितारों से पूछिए</a>
+    <a href="hi-compatibility.html">💞 राशि मेल जाँच</a>
+    <a href="hi-big-three.html">☀️ सूर्य, चंद्र और लग्न की समझ</a>
+    <a href="hi-birth-chart.html">🗺️ जन्म कुंडली (बर्थ चार्ट) क्या है?</a>
+    <a href="hi-rising-sign.html">🌅 लग्न (राइज़िंग साइन) क्या है?</a>
+    <a href="hi-elements.html">🔥 चार तत्वों की पूरी जानकारी</a>
+    <a href="hi-modalities.html">🌀 चर, स्थिर और द्विस्वभाव राशियाँ</a>
+    <a href="hi-mercury-retrograde.html">☿ बुध वक्री (मरकरी रेट्रोग्रेड) क्या है?</a>
+  </div>
+
+  <p class="note">केवल मनोरंजन के लिए। राशिफल पेशेवर सलाह नहीं है।</p>
+  <p class="note">यह साइट पश्चिमी ज्योतिष (सूर्य राशि) पर आधारित है। भारतीय वैदिक राशि (चंद्र राशि) इससे अलग हो सकती है।</p>
+  <p class="note"><a href="hi-about.html">हमारे बारे में</a> · <a href="hi-privacy.html">गोपनीयता नीति</a></p>
+
+<script>
+  var signs = [
+    ["♈","मेष","21 मार्च - 19 अप्रैल","अग्नि","मेष राशि के लोग साहसी, तेज़ और सीधे-सपाट होते हैं। जो काम दूसरे सिर्फ़ सोचते हैं, ये शुरू कर देते हैं। आपकी ताकत साहस है; आपका सबक धैर्य है।"],
+    ["♉","वृषभ","20 अप्रैल - 20 मई","पृथ्वी","वृषभ स्थिर और सुखप्रिय होता है, जो ऐसा जीवन बनाता है जिसमें रहना अच्छा लगे। आपकी ताकत वफ़ादारी है; आपका सबक लचीलापन है।"],
+    ["♊","मिथुन","21 मई - 20 जून","वायु","मिथुन जिज्ञासु और तेज़ बुद्धि वाला होता है, जो विचारों और लोगों को जोड़ता है। आपकी ताकत संवाद है; आपका सबक एक चीज़ पर टिके रहना है।"],
+    ["♋","कर्क","21 जून - 22 जुलाई","जल","कर्क रक्षक और सहज-बोध वाला होता है। कोई कुछ कहे, उससे पहले ही वह माहौल का मन भांप लेता है। आपकी ताकत देखभाल है; आपका सबक दूसरों को अपनी देखभाल करने देना है।"],
+    ["♌","सिंह","23 जुलाई - 22 अगस्त","अग्नि","सिंह गर्मजोशी भरा और तेजस्वी होता है, जहाँ जाता है वहाँ रोशनी फैला देता है। आपकी ताकत उदारता है; आपका सबक तालियों की ज़रूरत न रखना है।"],
+    ["♍","कन्या","23 अगस्त - 22 सितंबर","पृथ्वी","कन्या सोच-समझकर और बारीकी से काम करने वाली राशि है, जो उन छोटी बातों को देख लेती है जिनसे चीज़ें ठीक चलती हैं। आपकी ताकत सेवा है; आपका सबक 'काफ़ी अच्छा' को स्वीकार करना है।"],
+    ["♎","तुला","23 सितंबर - 22 अक्टूबर","वायु","तुला संतुलित और न्यायप्रिय होता है, लोगों और जगहों में संतुलन खोजता है। आपकी ताकत सामंजस्य है; आपका सबक सबकी मंज़ूरी के बिना फ़ैसला लेना है।"],
+    ["♏","वृश्चिक","23 अक्टूबर - 21 नवंबर","जल","वृश्चिक गहरा और पैनी नज़र वाला होता है, जो सतह के नीचे देख लेता है। आपकी ताकत गहराई है; आपका सबक परखे बिना भरोसा करना है।"],
+    ["♐","धनु","22 नवंबर - 21 दिसंबर","अग्नि","धनु साहसी और आशावादी होता है, हमेशा अगली मंज़िल की ओर देखता है। आपकी ताकत दूरदृष्टि है; आपका सबक जिस राह पर हैं उसे पूरा करना है।"],
+    ["♑","मकर","22 दिसंबर - 19 जनवरी","पृथ्वी","मकर अनुशासित और महत्वाकांक्षी होता है, लंबे लक्ष्यों की ओर धीरे-धीरे चढ़ता है। आपकी ताकत दृढ़ता है; आपका सबक रास्ते में आराम करना है।"],
+    ["♒","कुंभ","20 जनवरी - 18 फ़रवरी","वायु","कुंभ मौलिक और स्वतंत्र सोच वाला होता है, भीड़ से कई साल आगे सोचता है। आपकी ताकत नवाचार है; आपका सबक लोगों के क़रीब बने रहना है।"],
+    ["♓","मीन","19 फ़रवरी - 20 मार्च","जल","मीन स्वप्निल और करुणामय होता है, गहराई से महसूस करता है और खुलकर कल्पना करता है। आपकी ताकत सहानुभूति है; आपका सबक स्वस्थ सीमाएँ बनाए रखना है।"]
+  ];
+
+  var love = [
+    "आज बड़े इशारे से ज़्यादा एक मीठा शब्द मायने रखता है। जो प्यारी बात मन में है, वह कह दीजिए।",
+    "कोई अपना आपको याद कर रहा है। एक छोटा सा संदेश उनका दिन बना सकता है।",
+    "पुरानी भावनाएँ लौट सकती हैं। उन्हें महसूस कीजिए, पर तुरंत कोई कदम न उठाइए।",
+    "खुलकर बात करने से माहौल साफ़ होता है। नरमी से बोलिए और ध्यान से सुनिए।",
+    "एक नया रिश्ता सहज लगता है। उसका आनंद लीजिए, जल्दबाज़ी मत कीजिए।",
+    "जहाँ जगह माँगी जाए, वहाँ जगह दीजिए। रिश्ता तब बढ़ता है जब किसी को घुटन न हो।",
+    "साथ मिलकर कोई सरल योजना बनाइए। साथ बिताया समय किसी परफ़ेक्ट योजना से ज़्यादा मायने रखता है।",
+    "जो माफ़ी आप रोके बैठे हैं, वह दोनों के मन का बोझ हल्का कर देगी।",
+    "आज प्यार छोटी आदतों में दिखता है: साथ खाना, एक मैसेज, एक सैर।",
+    "पहले ख़ुद के सबसे अच्छे साथी बनिए। बाक़ी सब उसके बाद आसान हो जाता है।"
+  ];
+  var work = [
+    "एक काम पर ध्यान दीजिए और उसे पूरा कीजिए। पाँच अधूरे कामों से एक पूरा काम बेहतर है।",
+    "अच्छे विचार को पहला साफ़ कदम चाहिए। भूलने से पहले उसे लिख लीजिए।",
+    "मदद जल्दी माँगिए। आपके आसपास कोई न कोई आसान रास्ता जानता है।",
+    "इस हफ़्ते की योजना व्यवस्थित कीजिए। अभी की थोड़ी सी तरतीब बाद में बहुत मेहनत बचाती है।",
+    "काम में छोटा सा जोखिम फ़ायदा देगा। आगे की ओर एक कोमल कदम बढ़ाइए।",
+    "बैठकों में बोलने से ज़्यादा सुनिए। एक काम की बात बातचीत में छिपी है।",
+    "पैसों के फ़ैसले थोड़ा रुककर लेना बेहतर रहता है। किसी बड़े फ़ैसले पर एक रात सोच लीजिए।",
+    "आपकी मेहनत देखी जा रही है, भले अभी कोई कह न रहा हो।",
+    "किसी एक चीज़ को ना कहिए ताकि जो ज़रूरी है उसे हाँ कह सकें।",
+    "आज रचनात्मक काम अच्छा चलेगा। बस आनंद के लिए कुछ बनाइए।"
+  ];
+  var mood = [
+    "सुबह ऊर्जा ज़्यादा रहेगी और शाम तक धीमी पड़ेगी। उसी के हिसाब से योजना बनाइए।",
+    "आज धीमे चलिए। जवाब तब आता है जब आप उसके पीछे भागना छोड़ देते हैं।",
+    "एक शांत पल साफ़ विचार लाता है। जो पहली बात सही लगे, उस पर भरोसा कीजिए।",
+    "पुरानी चिंताएँ हल्की पड़ रही हैं। जिससे आप डर रहे थे, वह उतना भारी नहीं निकलता।",
+    "आराम भी तरक़्क़ी का हिस्सा है, रुकना नहीं। ख़ुद के साथ नरमी से पेश आइए।",
+    "खुली हवा और थोड़ी सैर भारी मन को उम्मीद से जल्दी हल्का कर देती है।",
+    "बेचैनी महसूस हो सकती है। उसे किसी शारीरिक या रचनात्मक काम में लगा दीजिए।",
+    "आज कृतज्ञता आपका सहारा है। तीन छोटी अच्छी बातें याद कीजिए जो आज हुईं।",
+    "शांत समय आपको ऊर्जा देता है। अपने लिए एक घंटा बचाकर रखिए।",
+    "हवा में नई संभावना है। ख़ुद को जिज्ञासु रहने दीजिए।"
+  ];
+  var colors = ["बैंगनी","सुनहरा","चाँदी जैसा","फ़िरोज़ी","गुलाबी","गहरा नीला","पन्ना हरा","पीला-सुनहरा","हल्का बैंगनी","गहरा लाल","आसमानी","मोती जैसा सफ़ेद"];
+
+  // drifting stars
+  for (var n = 0; n < 28; n++) {
+    var s = document.createElement("div");
+    var size = 2 + Math.random() * 4;
+    s.className = "star";
+    s.style.width = size + "px";
+    s.style.height = size + "px";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (18 + Math.random() * 30) + "s, " + (3 + Math.random() * 5) + "s";
+    s.style.animationDelay = (-Math.random() * 40) + "s, " + (-Math.random() * 6) + "s";
+    document.body.appendChild(s);
+  }
+
+  var grid = document.getElementById("grid");
+  signs.forEach(function (s, i) {
+    var div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = s[0] + "<span>" + s[1] + "</span>";
+    div.onclick = function () { show(i); };
+    grid.appendChild(div);
+  });
+
+  function show(i) {
+    var today = new Date();
+    var start = new Date(today.getFullYear(), 0, 0);
+    var d = Math.floor((today - start) / 86400000);
+    var sg = signs[i];
+    var dateText = today.toLocaleDateString("hi-IN", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
+
+    document.getElementById("signName").textContent = sg[0] + " " + sg[1];
+    document.getElementById("meta").textContent = sg[2] + " · " + sg[3] + " तत्व · " + dateText;
+    document.getElementById("about").textContent = sg[4];
+    document.getElementById("love").textContent = love[(d + i * 5) % love.length];
+    document.getElementById("work").textContent = work[(d * 2 + i * 7) % work.length];
+    document.getElementById("mood").textContent = mood[(d * 3 + i * 3) % mood.length];
+    document.getElementById("lucky").textContent =
+      "शुभ रंग: " + colors[(d + i * 4) % colors.length] +
+      "  ·  शुभ अंक: " + (((d * 7 + i * 11) % 99) + 1);
+    document.getElementById("result").style.display = "block";
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
